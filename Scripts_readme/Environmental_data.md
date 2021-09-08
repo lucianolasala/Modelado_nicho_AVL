@@ -1,5 +1,5 @@
 ----------
-The following code Calibration area (M) consist of ecoregions in area of interest (i.e., Argentina) where O. turicata has been recorded
+Calibration area (M) consist of ecoregions in area of interest where FLA have been recorded.
 
 ``` r
 gc()
