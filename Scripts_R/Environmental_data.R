@@ -80,18 +80,29 @@ bsas = arg %>% filter(NAME_1 == "Buenos Aires")
 plot(bsas$geometry, add = TRUE)
 
 # Result: none of the invalid geometries corresponds with those to be used as M. 
-# Therefore, we filter out the invalid ones and proceed with the rest.
+# Therefore, we filter out the 15 invalid ones and proceed with the rest.
 
-valid_watersheds = watersheds[!(watersheds$BASIN_ID == 12788|
-                              watersheds$BASIN_ID == 25790|
-                              watersheds$BASIN_ID == 57719),]
+valid_watersheds = watersheds[!(watersheds$BASIN_ID == 3749|
+                                  watersheds$BASIN_ID == 12788| 
+                                  watersheds$BASIN_ID == 15508|
+                                  watersheds$BASIN_ID == 34768|
+                                  watersheds$BASIN_ID == 36779|
+                                  watersheds$BASIN_ID == 42630|
+                                  watersheds$BASIN_ID == 45894|
+                                  watersheds$BASIN_ID == 51724|
+                                  watersheds$BASIN_ID == 57719|
+                                  watersheds$BASIN_ID == 59742|
+                                  watersheds$BASIN_ID == 60178|
+                                  watersheds$BASIN_ID == 65296|
+                                  watersheds$BASIN_ID == 69751|
+                                  watersheds$BASIN_ID == 116697|
+                                  watersheds$BASIN_ID == 131432),]
 
 remove(valid_watersheds)
 
 plot(valid_watersheds$geometry, col = "blue")
 
-
-
+st_write(valid_watersheds, "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Valid watersheds/Watersheds.gpkg", driver = "gpkg")
 
 
 # Carga de archivo vectorial de ocurrencias
@@ -125,8 +136,8 @@ length(avl_df$Long)  # 96
 # avl_df is "data.frame" and needs to be transformed into "sf" for further spatial operations
 
 avl_sf <- do.call("st_sfc", c(lapply(1:nrow(avl_df),  
-                                          function(i) {
-                                            st_point(as.numeric(avl_df[i, ]))}), list("crs" = 4326))) 
+                              function(i) {
+                              st_point(as.numeric(avl_df[i, ]))}), list("crs" = 4326))) 
 
 head(avl_sf)
 class(avl_sf)  # "sfc_POINT" "sfc"
@@ -134,12 +145,18 @@ class(avl_sf)  # "sfc_POINT" "sfc"
 sf::sf_use_s2(TRUE)
 
 
-avl_df$Ecoregion <- apply(st_intersects(watersheds, avl_sf, sparse = FALSE), MARGIN = 2,
+# Load valid watersheds
+
+remove(watersheds)
+
+watersheds <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Valid watersheds/Watersheds.gpkg")
+
+avl_df$Watershed <- apply(st_intersects(watersheds, avl_sf, sparse = FALSE), MARGIN = 2,
                                function(watershed) { 
                                  watersheds[which(watershed), ]$BASIN_ID
                                })
 
-head(turicata_df)
+head(avl_df)
 
 
 
