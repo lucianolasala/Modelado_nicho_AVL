@@ -4,8 +4,10 @@
 
 **Luciano F. La Sala**<sup>1</sup>, **Viviana Randazzo1**<sup>2</sup>, **Leandro Lucchi**<sup>2</sup>, **Norma Basabe**<sup>2</sup>, **Elena Visciarelli**<sup>2</sup>
 
-><sup>1</sup>Instituto de Ciencias Biológicas y Biomédicas del Sur (CONICET-UNS), Bahía Blanca, Argentina.  
-<sup>2</sup>Cátedra de Parasitología Clínica, Departamento de Biología Bioquímica y Farmacia. Universidad Nacional del Sur
+><sup>1</sup>Instituto de Ciencias Biológicas y Biomédicas del Sur           
+ (CONICET-UNS), Bahía Blanca, Argentina.  
+<sup>2</sup>Cátedra de Parasitología Clínica, Departamento de Biología 
+ Bioquímica y Farmacia. Universidad Nacional del Sur
 
 This repository contains R scripts used for the development of an ecological niche model (henceforth ENM) for free-living amoebae in southen Buenos Aires province.
 The repository is meant to serve as a dynamic document for other parties interested on the ecology of these organisms and it will be updated as additional data is gathered and new methodological methods are developed. 
