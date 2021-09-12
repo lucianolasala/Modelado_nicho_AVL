@@ -20,23 +20,20 @@ Table of Contents
 
 ### Data
 
-[1. Remote sensing and climate data processing](./GEE_raster_processing/README.md)  
+[1. Climate data processing](./GEE_raster_processing/README.md)  
 - [Individual varaibles](./GEE_raster_processing/Data_processing)
-
-[2. Occurrence data and model calibration](./Scripts_README/Occurrence_data_model_calibration.md)
 
 ### Model fiting
 
-[4. Model calibration](./calibration/calibration.md)
+[2. Occurrence data and model calibration](./Scripts_README/Occurrence_data_model_calibration.md)
 
 ### Model assessment and prediction
 
-
 ### Model evaluation
 
-[5. Model validation](./Validation/README.md)
+[4. Model validation](./Validation/README.md)
 
-[6. Suitability maps](./plots)
+[5. Suitability maps](./plots)
 
 ----------
 > Suggested citation: DOI: https://zenodo.org/badge/375789827.svg)
