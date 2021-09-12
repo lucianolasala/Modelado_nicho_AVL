@@ -2,7 +2,7 @@
 
 <img src="https://user-images.githubusercontent.com/20196847/132431276-35bf910b-ab3c-48c0-86c0-9efa52fb5a93.jpg" height="100" width="100" img align="right">
 
-Luciano F. La Sala^2^, **Viviana Randazzo1**, **Leandro Lucchi**, **Norma Basabe**, **Elena Visciarelli**
+**Luciano F. La Sala**^1, **Viviana Randazzo1**, **Leandro Lucchi**, **Norma Basabe**, **Elena Visciarelli**
 
 >^1^Instituto de Ciencias Biológicas y Biomédicas del Sur (CONICET-UNS), Bahía Blanca, Argentina.
 
