@@ -4,6 +4,7 @@
 # Load required packages
 
 gc()
+
 rm(list=ls(all=TRUE))
 
 if(!require(tidyverse)){
@@ -104,15 +105,19 @@ plot(valid_watersheds$geometry, col = "blue")
 
 st_write(valid_watersheds, "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Valid watersheds/Watersheds.gpkg", driver = "gpkg")
 
-
+#------------------------------------------------------------------------
 # Carga de archivo vectorial de ocurrencias
+#------------------------------------------------------------------------
+
+rm(list=ls(all=TRUE))
 
 avl <- st_read("C:/Users/User/Documents/Analyses/AVL/occs/AVL_occs.gpkg")
 
+summary(avl)
 class(avl)
 head(avl)
 
-avl_df <- as.data.frame(sf::st_coordinates(avl))  # retrieve coordinates in matrix form
+avl_df <- as.data.frame(sf::st_coordinates(avl))  # Retrieve coordinates in matrix form
 head(avl_df)
 
 colnames(avl_df) <- c("Long", "Lat")  # Name columns Long and Lat
@@ -145,7 +150,35 @@ class(avl_sf)  # "sfc_POINT" "sfc"
 sf::sf_use_s2(TRUE)
 
 
+#-------------------------------------------------------------------------
+# Disolve ecoregions with AVL occurrences
+#-------------------------------------------------------------------------
+
+install.packages("rgdal")
+install.packages("rgeos")
+
+turicata_dis <- readOGR("C:/Users/User/Documents/Analyses/Ticks ENM/Vector data/O_turicata_M/turicata_ecoregions.gpkg")
+
+turicata_dis <- st_read("C:/Users/User/Documents/Analyses/Ticks ENM/Vector data/O_turicata_M/turicata_ecoregions.gpkg")
+class(turicata_dis)
+
+
+turicata_dissolved <- rgeos::gUnaryUnion(turicata_dis)   # fc in rgeos pkg
+class(turicata_dissolved)  # SpatialPolygons, no need to SpatialPolygonsDataFrame
+
+str(turicata_dissolved)
+plot(turicata_dissolved, col = "blue")
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------------
 # Load valid watersheds
+#------------------------------------------------------------------------------------
 
 remove(watersheds)
 
@@ -156,13 +189,12 @@ avl_df$Watershed <- apply(st_intersects(watersheds, avl_sf, sparse = FALSE), MAR
                                  watersheds[which(watershed), ]$BASIN_ID
                                })
 
-head(avl_df)
+avl_df
 
-
-
-
-# Set working directory, load environmental variables (global extent), and check resolution
-# and layer extent
+#----------------------------------------------------------------------
+# Set working directory, load environmental variables (global extent), 
+# and check resolution and layer extent
+#----------------------------------------------------------------------
 
 path1 = ("C:/Users/User/Documents/Analyses/AVL/Rasters/Original/") 
 setwd("C:/Users/User/Documents/Analyses/AVL/Rasters/Original/")
@@ -247,7 +279,16 @@ monthly_tmin <- raster::stack("./monthly_tmin_average.nc")
 monthly_tmin_mean = mean(monthly_tmin)
 monthly_tmin_mean
 
+
+
+
+
+
 monthly_tmin_ind <- unstack(monthly_tmin)
+
+
+
+# Si precisaramos guardar la variable para cada mes en el serie temporal:
 
 jan = monthly_tmin_ind[[1]]
 writeRaster(jan, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii/Min. monthly air temperature January", format = "ascii", overwrite=TRUE)

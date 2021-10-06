@@ -18,16 +18,16 @@ A Maximum Entropy approach (https://biodiversityinformatics.amnh.org/open_source
 Table of Contents
 ----------
 
-### Data
+### Data processing
 
 [1. Watershed data processing](./Scripts_readme/Environmental_data.md)  
 
-[1. Climate data processing](./GEE_raster_processing/README.md)  
+[2. Climate data processing](./GEE_raster_processing/README.md)  
 - [Individual varaibles](./GEE_raster_processing/Data_processing)
 
 ### Model fiting
 
-[2. Occurrence data and model calibration](./Scripts_README/Occurrence_data_model_calibration.md)
+[3. Occurrence data and model calibration](./Scripts_README/Occurrence_data_model_calibration.md)
 
 ### Model assessment and prediction
 
