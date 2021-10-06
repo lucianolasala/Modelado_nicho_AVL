@@ -25,7 +25,16 @@ if(!require(udunits2)){
 if(!require(ncdf4)){
   install.packages("ncdf4")
 }
+if(!require(rgdal)){
+  install.packages("rgdal")
+}
+if(!require(rgeos)){
+  install.packages("rgeos")
+}
 
+
+library("rgdal")
+library("rgeos")
 library("readr")
 library("sf")
 library("tidyverse")
@@ -193,12 +202,6 @@ st_write(unique_watersheds_occs, "C:/Users/User/Documents/Analyses/AVL/Vectorial
 # Disolve ecoregions with AVL occurrences
 #-------------------------------------------------------------------------
 
-install.packages("rgdal")
-install.packages("rgeos")
-
-library(rgdal)
-library(rgeos)
-
 watersheds <- readOGR("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/Watersheds_avl.gpkg")
 
 watersheds_dissolved <- rgeos::gUnaryUnion(watersheds)   # fc in rgeos pkg
@@ -206,7 +209,7 @@ class(watersheds_dissolved)  # SpatialPolygons, no need to SpatialPolygonsDataFr
 
 plot(watersheds_dissolved, col = "blue")
 
-
+st_write(watersheds_dissolved, "")
 
 
 

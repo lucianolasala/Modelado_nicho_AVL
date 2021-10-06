@@ -1,203 +1,24 @@
-# Calibration area (M) consist of ecoregions in area of interest where FLA
-# have been recorded
-
-# Load required packages
-
-gc()
-
-rm(list=ls(all=TRUE))
-
-if(!require(tidyverse)){
-  install.packages("tidyverse")
-}
-if(!require(sf)){
-  install.packages("sf")
-}
-if(!require(readr)){
-  install.packages("readr")
-}
-if(!require(raster)){
-  install.packages("raster")
-}
-if(!require(udunits2)){
-  install.packages("udunits2")
-}
-if(!require(ncdf4)){
-  install.packages("ncdf4")
-}
-
-library("readr")
-library("sf")
-library("tidyverse")
-library("raster")
-library("udunits2")
-library("ncdf4")
-library("magrittr")
-
-#------------------------------------------------------------------------------------
-# Estimation of M
-#------------------------------------------------------------------------------------
-
-# Carga de archivo vectorial de cuencas 
-
-watersheds <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/hydrosheds/sa_bas_30s_beta")
-class(watersheds)
-str(watersheds)
-
-valid = st_is_valid(watersheds)
-length(valid)
-
-which(valid=="FALSE") # 15 (numbers 3749  12788  15508  34768  36779  42630  45894  51724  
-                      # 57719  59742  60178  65296 69751 116697 131432)
-
-which(valid=="TRUE")  # 163640
-
-# Ver donde se ubican los poligonos con geometrias invalidas
-
-corrupt = watersheds %>% filter(
-  BASIN_ID == 3749 | 
-  BASIN_ID == 12788 | 
-  BASIN_ID == 15508 |
-  BASIN_ID == 34768 |
-  BASIN_ID == 36779 |
-  BASIN_ID == 42630 |
-  BASIN_ID == 45894 |
-  BASIN_ID == 51724 |
-  BASIN_ID == 57719 |
-  BASIN_ID == 59742 |
-  BASIN_ID == 60178 |
-  BASIN_ID == 65296 |
-  BASIN_ID == 69751 |
-  BASIN_ID == 116697 |
-  BASIN_ID == 131432)  
-  
-plot(corrupt$geometry)
-
-arg <- st_read("C:/Users/User/Documents/Analyses/Wild boar diseases/Shapefiles/ARG_adm/ARG_adm2.shp")
-class(arg)
-str(arg)
-
-bsas = arg %>% filter(NAME_1 == "Buenos Aires")
-plot(bsas$geometry, add = TRUE)
-
-# Result: none of the invalid geometries corresponds with those to be used as M. 
-# Therefore, we filter out the 15 invalid ones and proceed with the rest.
-
-valid_watersheds = watersheds[!(watersheds$BASIN_ID == 3749|
-                                  watersheds$BASIN_ID == 12788| 
-                                  watersheds$BASIN_ID == 15508|
-                                  watersheds$BASIN_ID == 34768|
-                                  watersheds$BASIN_ID == 36779|
-                                  watersheds$BASIN_ID == 42630|
-                                  watersheds$BASIN_ID == 45894|
-                                  watersheds$BASIN_ID == 51724|
-                                  watersheds$BASIN_ID == 57719|
-                                  watersheds$BASIN_ID == 59742|
-                                  watersheds$BASIN_ID == 60178|
-                                  watersheds$BASIN_ID == 65296|
-                                  watersheds$BASIN_ID == 69751|
-                                  watersheds$BASIN_ID == 116697|
-                                  watersheds$BASIN_ID == 131432),]
-
-remove(valid_watersheds)
-
-plot(valid_watersheds$geometry, col = "blue")
-
-st_write(valid_watersheds, "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Valid watersheds/Watersheds.gpkg", driver = "gpkg")
-
-#------------------------------------------------------------------------
-# Carga de archivo vectorial de ocurrencias
-#------------------------------------------------------------------------
-
-rm(list=ls(all=TRUE))
-
-avl <- st_read("C:/Users/User/Documents/Analyses/AVL/occs/AVL_occs.gpkg")
-
-summary(avl)
-class(avl)
-head(avl)
-
-avl_df <- as.data.frame(sf::st_coordinates(avl))  # Retrieve coordinates in matrix form
-head(avl_df)
-
-colnames(avl_df) <- c("Long", "Lat")  # Name columns Long and Lat
-head(avl_df)
-length(avl_df$Long)  # 96
-
-
-#------------------------------------------------------------------------------------
-# Intersect between world watersheds and FLA occurrences
-#------------------------------------------------------------------------------------
-
-# Create a points collection
-# The do.call function executes a function by its name (here, "st_sfc") and a list of 
-# corresponding arguments. 
-# st_sfc = Create simple feature geometry list column (the column "geometry" in sf dataframe)
-# st_point = Create simple feature from a numeric vector, matrix or list
-# lapply() es un caso especial de apply(), diseñado para aplicar funciones a todos 
-# los elementos de una lista (de alli la letra "l")
-# Referencia para lapply: https://bookdown.org/jboscomendoza/r-principiantes4/lapply.html
-
-# avl_df is "data.frame" and needs to be transformed into "sf" for further spatial operations
-
-avl_sf <- do.call("st_sfc", c(lapply(1:nrow(avl_df),  
-                              function(i) {
-                              st_point(as.numeric(avl_df[i, ]))}), list("crs" = 4326))) 
-
-head(avl_sf)
-class(avl_sf)  # "sfc_POINT" "sfc"
-
-sf::sf_use_s2(TRUE)
-
-
-#-------------------------------------------------------------------------
-# Disolve ecoregions with AVL occurrences
-#-------------------------------------------------------------------------
-
-install.packages("rgdal")
-install.packages("rgeos")
-
-turicata_dis <- readOGR("C:/Users/User/Documents/Analyses/Ticks ENM/Vector data/O_turicata_M/turicata_ecoregions.gpkg")
-
-turicata_dis <- st_read("C:/Users/User/Documents/Analyses/Ticks ENM/Vector data/O_turicata_M/turicata_ecoregions.gpkg")
-class(turicata_dis)
-
-
-turicata_dissolved <- rgeos::gUnaryUnion(turicata_dis)   # fc in rgeos pkg
-class(turicata_dissolved)  # SpatialPolygons, no need to SpatialPolygonsDataFrame
-
-str(turicata_dissolved)
-plot(turicata_dissolved, col = "blue")
-
-
-
-
-
-
-
-
 #------------------------------------------------------------------------------------
 # Load valid watersheds
 #------------------------------------------------------------------------------------
 
-remove(watersheds)
+rm(list=ls(all=TRUE))
 
-watersheds <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Valid watersheds/Watersheds.gpkg")
+# Steps: 
+# 1) Save all rasters as ascii
+# 2) Crop and mask to M
 
-avl_df$Watershed <- apply(st_intersects(watersheds, avl_sf, sparse = FALSE), MARGIN = 2,
-                               function(watershed) { 
-                                 watersheds[which(watershed), ]$BASIN_ID
-                               })
+# Load M
 
-avl_df
+M <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/Watersheds_AVL.gpkg")
 
 #----------------------------------------------------------------------
 # Set working directory, load environmental variables (global extent), 
 # and check resolution and layer extent
 #----------------------------------------------------------------------
 
-path1 = ("C:/Users/User/Documents/Analyses/AVL/Rasters/Original/") 
-setwd("C:/Users/User/Documents/Analyses/AVL/Rasters/Original/")
+path1 = ("C:/Users/User/Documents/Analyses/AVL/Rasters/Rasters_procesar/") 
+setwd("C:/Users/User/Documents/Analyses/AVL/Rasters/Rasters_procesar/")
 
 files = list.files(path = path1, pattern = ".nc$", all.files = TRUE, full.names = FALSE)
 files 
@@ -207,16 +28,185 @@ files
 #------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------------
-# Topography: Stream length and flow accumulation (two bands)
+# Elevation
+#------------------------------------------------------------------------------------
+
+elevation = raster("./elevation.nc")
+class(elevation)
+elevation  # loads 1  of  2  bands (flow_acc)
+
+elevation@file@nbands  # 4 bands
+
+elevation_stack = raster::stack("./elevation.nc")
+elevation_stack
+
+elev_cropped <- crop(elevation_stack, M)
+
+# Mask raster stack using the vector
+
+elev_mask <- mask(elev_cropped, M)
+class(elev_mask)  # "RasterBrick"
+
+plot(elev_mask[[1]])  #
+str(elev_mask)
+
+elev_mask@file@nbands  # Outputs 1 band but has 4
+elev_mask@data@names  # Nombre de las bandas: "X1" "X2" "X3" "X4" 
+
+individual_elevation <- unstack(vars_mask)  # Hay que hacer unstack para luego guardar cada raster individual
+class(individual_elevation)  # list
+
+# Define names for each of the bands to be saved 
+
+variables <- as.factor(c("Elevation_min","Elevation_max","Elevation_range","Elevation_average"))
+
+# Save as ascii
+
+for(i in 1:length(variables)) {
+  writeRaster(individual_elevation[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
+}
+
+
+#------------------------------------------------------------------------------------
+# Flow
 #------------------------------------------------------------------------------------
 
 flow = raster("./flow_acc.nc")
-class(flow)
-flow  # loads 1  of  2  bands
+flow  # loads 1  of  2  bands (flow_acc)
 
 flow@file@nbands  # 2 bands
 
 flow_stack = raster::stack("./flow_acc.nc")
+flow_stack
+
+flow_cropped <- crop(flow_stack, M)
+
+# Mask raster stack using the vector
+
+flow_mask <- mask(flow_cropped, M)
+class(flow_mask)  # "RasterBrick"
+
+plot(flow_mask[[1]])
+str(flow_mask)
+
+flow_mask@file@nbands  # Outputs 1 band but has 2
+flow_mask@data@names  # Nombre de las bandas: "X1" "X2"
+
+individual_flow <- unstack(flow_mask)  # Hay que hacer unstack para luego guardar cada raster individual
+class(individual_flow)  # list
+
+# Define names for each of the bands to be saved 
+
+variables <- as.factor(c("Upstream stream grid cells","Upstream catchment grid cells"))
+
+# Save as ascii
+
+for(i in 1:length(variables)) {
+  writeRaster(individual_flow[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Crop raster stack with 19 variables using the vector
+
+allrasters <- stack(files)
+class(allrasters)  # "RasterStack"
+
+cropped <- crop(allrasters, M)
+extent(cropped[[1]])
+
+str(cropped)
+class(cropped)  # Changes from RasterStack to RasterBrick
+
+plot(cropped[[1]])
+
+
+# Mask raster stack using the vector
+
+vars_mask <- mask(cropped, M)
+class(vars_mask)  # "RasterBrick"
+
+plot(vars_mask[[1]])
+str(vars_mask)
+
+vars_mask@file@nbands  # 105 bands
+vars_mask@data@names  # Nombre de las bandas 
+
+up_elevation <-vars_mask[[1:4]]
+up_elevation  
+
+individual_r <- unstack(vars_mask)  # Hay que hacer unstack para luego guardar cada raster individual
+class(individual_r)  # list
+
+plot(individual_r[[1]])
+
+
+variables <- as.factor(c("elevation","flow_acc",                      
+                         "geology_weighted_sum.nc","hydroclim_average+sum",         
+                         "hydroclim_weighted_average+sum","landcover_average",             
+                         "landcover_maximum","landcover_minimum",             
+                         "landcover_range","landcover_weighted_average",    
+                         "monthly_prec_sum","monthly_prec_weighted_sum",     
+                         "monthly_tmax_average","monthly_tmax_weighted_average", 
+                         "monthly_tmin_average","monthly_tmin_weighted_average", 
+                         "quality_control","slope","soil_average","soil_maximum",                  
+                         "soil_minimum","soil_range","soil_weighted_average"))
+
+# Guardar como GTiff to keep multiple bands if necessary
+
+for(i in 1:length(variables)) {
+  writeRaster(individual_r[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_1/", variables[i]), format = "GTiff", options = "INTERLEAVE=BAND", overwrite=TRUE)
+}
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------------
+# Procesamiento y cálculo de estadísticas en capas individuales
+#------------------------------------------------------------------------------------
+
+path2 = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_1/"
+
+setwd("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_1/")
+
+files = list.files(path = path2, pattern = ".asc$", all.files = TRUE, full.names = FALSE)
+files 
+
+#------------------------------------------------------------------------------------
+# Topography: Stream length and flow accumulation (two bands)
+#------------------------------------------------------------------------------------
+
+flow = raster("./flow_acc.asc")
+class(flow)
+flow  # loads 1  of  2  bands (flow_acc)
+
+flow@file@nbands  # 1 band
+
+flow_stack = raster::stack("./flow_acc.asc")
 flow_stack
 
 flow_ind <- unstack(flow_stack)
@@ -275,14 +265,6 @@ for(i in 1:length(variables)) {
 #------------------------------------------------------------------------------------
 
 monthly_tmin <- raster::stack("./monthly_tmin_average.nc")
-
-monthly_tmin_mean = mean(monthly_tmin)
-monthly_tmin_mean
-
-
-
-
-
 
 monthly_tmin_ind <- unstack(monthly_tmin)
 
