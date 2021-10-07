@@ -121,7 +121,7 @@ upstream_prec_mean@file@nbands  # 1
 
 writeRaster(upstream_prec_mean, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/Monthly upstream precipitation", format = "GTiff", overwrite = TRUE)
 ```
-
+----
 #### Monthly maximum temperature (distance-weighted average)
 
 ```r
