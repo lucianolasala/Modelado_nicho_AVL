@@ -1,11 +1,6 @@
-----------
-Calibration area (M) consist of ecoregions in area of interest where FLA have been recorded.
+Load watersheds
 
 ``` r
-#------------------------------------------------------------------------------------
-# Load valid watersheds
-#------------------------------------------------------------------------------------
-
 rm(list=ls(all=TRUE))
 
 # Steps: 
