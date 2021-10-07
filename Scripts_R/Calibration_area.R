@@ -206,13 +206,12 @@ watersheds <- readOGR("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_cal
 
 watersheds_dissolved <- rgeos::gUnaryUnion(watersheds)   # fc in rgeos pkg
 class(watersheds_dissolved)  # SpatialPolygons, no need to SpatialPolygonsDataFrame
+str(watersheds_dissolved)
+
+watersheds_spdf = as(watersheds_dissolved, "SpatialPolygonsDataFrame")
+class(watersheds_spdf)
 
 plot(watersheds_dissolved, col = "blue")
+plot(watersheds_spdf, col = "blue")
 
-st_write(watersheds_dissolved, "")
-
-
-
-
-
-
+writeOGR(watersheds_spdf, layer = "watersheds_spdf", "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/Watersheds_dissolved.shp", driver = "ESRI Shapefile")
