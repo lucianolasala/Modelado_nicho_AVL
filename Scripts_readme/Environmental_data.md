@@ -18,7 +18,7 @@ setwd("C:/Users/User/Documents/Analyses/AVL/Rasters/Rasters_procesar/")
 files = list.files(path = path1, pattern = ".nc$", all.files = TRUE, full.names = FALSE)
 files 
 ```
-
+----
 #### Elevation
 
 ```r
@@ -38,7 +38,7 @@ for(i in 1:length(variables)) {
   writeRaster(individual_elevation[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
 }
 ```
-
+----
 #### Flow
 
 ```r
@@ -60,7 +60,7 @@ for(i in 1:length(variables)) {
   writeRaster(individual_flow[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
 }
 ```
-
+----
 #### Hydroclimatic variables
 
 ```r
@@ -83,41 +83,24 @@ for(i in 1:length(variables)) {
   writeRaster(individual_hydroclimatic[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
 }
 ```
-
+----
 #### Monthly upstream precipitation (distance-weighted sum)
 
 ```r
 upstream_prec = raster("./monthly_prec_weighted_sum.nc")
-upstream_prec  # loads 1 of 12 bands
-
-upstream_prec@file@nbands  # 12 bands
 
 upstream_prec_stack = raster::stack("./monthly_prec_weighted_sum.nc")
-upstream_prec_stack
 
 upstream_prec_cropped <- crop(upstream_prec_stack, M)
 
-# Mask raster stack using the vector
-
 upstream_prec_mask <- mask(upstream_prec_cropped, M)
-class(upstream_prec_mask)  # "RasterBrick"
+```
 
-upstream_prec_mask@file@nbands  # 12
-upstream_prec_mask@data@names  # Nombre de las bandas: "X1" ... "X12"
-
-#---------------------------------------------------------------------------------------
-# Pixel-wise stats for raster brick 
-#---------------------------------------------------------------------------------------
-# Reduction using mean: each layer represents the mean value for each month over the 1970-2000
-# period. Then, one can apply a pixel-wise reduction functions (mean, min, max, etc.) 
-# across layers to obtain summary statistics for each location (pixel) during this period. 
-#---------------------------------------------------------------------------------------
+##### Pixel-wise stats for raster brick 
+>Reduction using mean: each layer represents the mean value for each month over the 1970-2000 period. Then, one can apply a pixel-wise reduction functions (mean, min, max, etc.) across layers to obtain summary statistics for each location (pixel) during this period. 
 
 upstream_prec_mean = mean(upstream_prec_mask)
 class(upstream_prec_mean)
-
-str(upstream_prec_mean)
-upstream_prec_mean@file@nbands  # 1
 
 writeRaster(upstream_prec_mean, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/Monthly upstream precipitation", format = "GTiff", overwrite = TRUE)
 ```
@@ -126,16 +109,14 @@ writeRaster(upstream_prec_mean, filename = "C:/Users/User/Documents/Analyses/AVL
 
 ```r
 monthly_tmax = raster("./monthly_tmax_weighted_average.nc")
-
 monthly_tmax_stack = raster::stack("./monthly_tmax_weighted_average.nc")
-
 monthly_tmax_cropped <- crop(monthly_tmax_stack, M)
-
 monthly_tmax_mask <- mask(monthly_tmax_cropped, M)
 ```
 
-#### Pixel-wise stats for raster brick 
+##### Pixel-wise stats for raster brick   
 >Reduction using mean: each layer represents the mean value for each month over the 1970-2000 period. Then, one can apply a pixel-wise reduction functions (mean, min, max, etc.) across layers to obtain summary statistics for each location (pixel) during this period.
+
 
 ```r
 monthly_tmax_mask_mean = mean(monthly_tmax_mask)
