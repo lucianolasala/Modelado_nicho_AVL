@@ -313,7 +313,42 @@ for(i in 1:length(variables)) {
 }
 
 
+#------------------------------------------------------------------------------------
+# Soil: Upstream soil (maximum)
+#------------------------------------------------------------------------------------
 
+rm(list=ls(all=TRUE))
+
+slope = raster("./slope.nc")
+slope  # loads 1  of  4  bands (flow_acc)
+
+slope@file@nbands  # 4 bands
+
+slope_stack = raster::stack("./slope.nc")
+slope_stack
+
+slope_cropped <- crop(slope_stack, M)
+
+# Mask raster stack using the vector
+
+slope_mask <- mask(slope_cropped, M)
+class(slope_mask)  # "RasterBrick"
+
+slope_mask@file@nbands  # Outputs 1 band but has 4
+slope_mask@data@names  # Nombre de las bandas: "X1" "X2" "X3" "X4"
+
+individual_slope <- unstack(slope_mask)  # Hay que hacer unstack para luego guardar cada raster individual
+class(individual_slope)  # list
+
+# Define names for each of the bands to be saved 
+
+variables <- as.factor(c("Slope min","Slope max","Slope range","Slope average"))
+
+# Save as ascii
+
+for(i in 1:length(variables)) {
+  writeRaster(individual_slope[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
+}
 
 
 

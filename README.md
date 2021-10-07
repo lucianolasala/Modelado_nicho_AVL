@@ -22,8 +22,7 @@ Table of Contents
 
 [1. Watershed data processing](./Scripts_readme/Environmental_data.md)  
 
-[2. Climate data processing](./GEE_raster_processing/README.md)  
-- [Individual varaibles](./GEE_raster_processing/Data_processing)
+[2. Climate data processing](./Scripts_readme/Environmental_data.md)
 
 ### Model fiting
 
