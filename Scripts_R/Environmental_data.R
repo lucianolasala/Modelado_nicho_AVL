@@ -4,23 +4,24 @@
 
 rm(list=ls(all=TRUE))
 
-# Steps: 
-# 1) Save all rasters as ascii
-# 2) Crop and mask to M
+M1 <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/Watersheds_dissolved.shp")
+M2 <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/Bs.As_province.gpkg")
 
-# Load M
+M3 <- st_intersection(M1, M2)
+class(M3)
+plot(M3$geom)
 
-M <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/Watersheds_AVL.gpkg")
+st_write(M3, "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/M_final.gpkg", driver = "gpkg")
 
 #----------------------------------------------------------------------
 # Set working directory, load environmental variables (global extent), 
 # and check resolution and layer extent
 #----------------------------------------------------------------------
 
-path1 = ("C:/Users/User/Documents/Analyses/AVL/Rasters/Rasters_procesar/") 
+path = ("C:/Users/User/Documents/Analyses/AVL/Rasters/Rasters_procesar/") 
 setwd("C:/Users/User/Documents/Analyses/AVL/Rasters/Rasters_procesar/")
 
-files = list.files(path = path1, pattern = ".nc$", all.files = TRUE, full.names = FALSE)
+files = list.files(path = path, pattern = ".nc$", all.files = TRUE, full.names = FALSE)
 files 
 
 #------------------------------------------------------------------------------------
@@ -30,6 +31,8 @@ files
 #------------------------------------------------------------------------------------
 # Elevation
 #------------------------------------------------------------------------------------
+
+M <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/M_final.gpkg")
 
 elevation = raster("./elevation.nc")
 class(elevation)
@@ -53,7 +56,7 @@ str(elev_mask)
 elev_mask@file@nbands  # Outputs 1 band but has 4
 elev_mask@data@names  # Nombre de las bandas: "X1" "X2" "X3" "X4" 
 
-individual_elevation <- unstack(vars_mask)  # Hay que hacer unstack para luego guardar cada raster individual
+individual_elevation <- unstack(elev_mask)  # Hay que hacer unstack para luego guardar cada raster individual
 class(individual_elevation)  # list
 
 # Define names for each of the bands to be saved 
@@ -495,4 +498,16 @@ mytable
 
 xlsx::write.xlsx(mytable, file = "C:/Users/User/Documents/Analyses/Ticks ENM/Modeling/O_turicata/Raster_props_calibration.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
 
+
+#----------------------------------------------------------------------------
+# Crop and mask to Bs. As. province
+#----------------------------------------------------------------------------
+
+rm(list=ls(all=TRUE))
+
+path = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/" 
+setwd("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/")
+
+files = list.files(path = path, pattern = ".tif$", all.files = TRUE, full.names = FALSE)
+files 
 
