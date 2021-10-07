@@ -1,4 +1,4 @@
->El código utilizado para producir el mapa se presenta [aquí](./Sampling_area.R).
+>El código utilizado para producir el mapa se presenta [aquí](./Scripts_R/Sampling_area.R).
 
 <img src="https://user-images.githubusercontent.com/20196847/136439107-ff04a847-fb28-42e7-a2d5-460532cd1316.jpg" width="400" img align="center">
 
