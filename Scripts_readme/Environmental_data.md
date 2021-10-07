@@ -4,12 +4,6 @@
 
 rm(list=ls(all=TRUE))
 
-# Steps: 
-# 1) Save all rasters as ascii
-# 2) Crop and mask to M
-
-# Load M
-
 M <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/Watersheds_AVL.gpkg")
 ```
 
@@ -39,34 +33,26 @@ elevation_stack
 
 elev_cropped <- crop(elevation_stack, M)
 
-# Mask raster stack using the vector
-
 elev_mask <- mask(elev_cropped, M)
 class(elev_mask)  # "RasterBrick"
 
-plot(elev_mask[[1]])  #
 str(elev_mask)
 
 elev_mask@file@nbands  # Outputs 1 band but has 4
 elev_mask@data@names  # Nombre de las bandas: "X1" "X2" "X3" "X4" 
 
-individual_elevation <- unstack(vars_mask)  # Hay que hacer unstack para luego guardar cada raster individual
+individual_elevation <- unstack(vars_mask)  # Must unstack to save each raster separately
 class(individual_elevation)  # list
 
-# Define names for each of the bands to be saved 
-
 variables <- as.factor(c("Elevation_min","Elevation_max","Elevation_range","Elevation_average"))
-
-# Save as ascii
 
 for(i in 1:length(variables)) {
   writeRaster(individual_elevation[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
 }
 ```
 
-#------------------------------------------------------------------------------------
-# Flow
-#------------------------------------------------------------------------------------
+#### Flow
+
 
 rm(list=ls(all=TRUE))
 
