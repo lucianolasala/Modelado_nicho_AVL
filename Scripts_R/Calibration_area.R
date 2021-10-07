@@ -157,7 +157,7 @@ class(avl_sf)  # "sfc_POINT" "sfc"
 
 sf::sf_use_s2(TRUE)
 
-watersheds <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Valid watersheds/Watersheds.gpkg")
+watersheds <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Valid watersheds/Valid_watersheds.gpkg")
 str(watersheds)
 
 avl_df$Watershed <- apply(st_intersects(watersheds, avl_sf, sparse = FALSE), MARGIN = 2,
@@ -168,6 +168,7 @@ avl_df
 is.data.frame(avl_df)
 
 unique_water <- unique(avl_df[c("Watershed")])
+unique_water
 
 #----------------------------------------------------------------------
 # Select watersheds by their ID (long way)
