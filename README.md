@@ -4,8 +4,7 @@
 
 **Luciano F. La Sala**<sup>1</sup>, **Viviana Randazzo**<sup>2</sup>, **Leandro Lucchi**<sup>2</sup>, **Norma Basabe**<sup>2</sup>, **Elena Visciarelli**<sup>2</sup>
 
-><sup>1</sup>Instituto de Ciencias Biológicas y Biomédicas del Sur           
-(CONICET-UNS), Bahía Blanca, Argentina.  
+><sup>1</sup>Instituto de Ciencias Biológicas y Biomédicas del Sur (CONICET-UNS), Bahía Blanca, Argentina.  
 <sup>2</sup>Cátedra de Parasitología Clínica, Departamento de Biología 
 Bioquímica y Farmacia. Universidad Nacional del Sur
 
