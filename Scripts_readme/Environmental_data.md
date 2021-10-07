@@ -1,4 +1,4 @@
->Load watersheds
+>Load watersheds to be used as calibration area (M)
 
 ```r
 
@@ -13,7 +13,9 @@ rm(list=ls(all=TRUE))
 M <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/Watersheds_AVL.gpkg")
 ```
 
-#### Set working directory, load environmental variables (global extent), and process by cropping, masking, calculating summary statistics, and exploring raster extent and resolution
+>Set working directory, load environmental variables (global extent), and process by cropping, masking, calculating summary statistics, and exploring raster extent and resolution.
+Layers are available as near-global netCDF-4 files, where each file contains one 
+variable and aggregation type (e.g. all 12 average landcover layers).
 
 ```r
 path1 = ("C:/Users/User/Documents/Analyses/AVL/Rasters/Rasters_procesar/") 
@@ -21,14 +23,10 @@ setwd("C:/Users/User/Documents/Analyses/AVL/Rasters/Rasters_procesar/")
 
 files = list.files(path = path1, pattern = ".nc$", all.files = TRUE, full.names = FALSE)
 files 
+```
 
-#------------------------------------------------------------------------------------
-# Load ncd4 layers and save as ascii
-#------------------------------------------------------------------------------------
+####Elevation
 
-#------------------------------------------------------------------------------------
-# Elevation
-#------------------------------------------------------------------------------------
 
 elevation = raster("./elevation.nc")
 class(elevation)
