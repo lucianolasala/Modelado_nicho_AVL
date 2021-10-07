@@ -78,8 +78,8 @@ upstream_prec_mask <- mask(upstream_prec_cropped, M)
 * Pixel-wise stats for raster brick 
 >Reduction using mean: each layer represents the mean value for each month over the 1970-2000 period. Then, one can apply a pixel-wise reduction functions (mean, min, max, etc.) across layers to obtain summary statistics for each location (pixel) during this period. 
 
+```r
 upstream_prec_mean = mean(upstream_prec_mask)
-class(upstream_prec_mean)
 
 writeRaster(upstream_prec_mean, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/Monthly upstream precipitation", format = "GTiff", overwrite = TRUE)
 ```
@@ -93,9 +93,8 @@ monthly_tmax_cropped <- crop(monthly_tmax_stack, M)
 monthly_tmax_mask <- mask(monthly_tmax_cropped, M)
 ```
 
-##### Pixel-wise stats for raster brick   
+* Pixel-wise stats for raster brick   
 >Reduction using mean: each layer represents the mean value for each month over the 1970-2000 period. Then, one can apply a pixel-wise reduction functions (mean, min, max, etc.) across layers to obtain summary statistics for each location (pixel) during this period.
-
 
 ```r
 monthly_tmax_mask_mean = mean(monthly_tmax_mask)
@@ -103,249 +102,121 @@ monthly_tmax_mask_mean = mean(monthly_tmax_mask)
 writeRaster(monthly_tmax_mask_mean, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/Monthly maximum temperature", format = "GTiff", overwrite = TRUE)
 ```
 
-#------------------------------------------------------------------------------------
-# Monthly minimum temperature (distance-weighted average)
-#------------------------------------------------------------------------------------
+----
+#### Monthly minimum temperature (distance-weighted average)
 
-rm(list=ls(all=TRUE))
-
+```r
 monthly_tmin = raster("./monthly_tmin_weighted_average.nc")
-monthly_tmin  # loads 1 of 12 bands
-
-monthly_tmin@file@nbands  # 12 bands
-
 monthly_tmin_stack = raster::stack("./monthly_tmin_weighted_average.nc")
-monthly_tmin_stack
-
 monthly_tmin_cropped <- crop(monthly_tmin_stack, M)
-
-# Mask raster stack using the vector
-
 monthly_tmin_mask <- mask(monthly_tmin_cropped, M)
-class(monthly_tmin_mask)  # "RasterBrick"
+```
 
-monthly_tmin_mask@file@nbands  # 12
-monthly_tmin_mask@data@names  # Nombre de las bandas: "X1" ... "X12"
+* Pixel-wise stats for raster brick 
+>Reduction using mean: each layer represents the mean value for each month over the 1970-2000 period. Then, one can apply a pixel-wise reduction functions (mean, min, max, etc.) across layers to obtain summary statistics for each location (pixel) during this period. 
 
-#---------------------------------------------------------------------------------------
-# Pixel-wise stats for raster brick 
-#---------------------------------------------------------------------------------------
-# Reduction using mean: each layer represents the mean value for each month over the 1970-2000
-# period. Then, one can apply a pixel-wise reduction functions (mean, min, max, etc.) 
-# across layers to obtain summary statistics for each location (pixel) during this period. 
-#---------------------------------------------------------------------------------------
-
+```r
 monthly_tmin_mask_mean = mean(monthly_tmin_mask)
 class(monthly_tmin_mask_mean)
-
-str(monthly_tmin_mask_mean)
-monthly_tmin_mask_mean@file@nbands  # 1
 
 writeRaster(monthly_tmin_mask_mean, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/Monthly minimum temperature", format = "GTiff", overwrite = TRUE)
 ```
 
-#------------------------------------------------------------------------------------
-# Slope
-#------------------------------------------------------------------------------------
+----
+#### Slope
 
-rm(list=ls(all=TRUE))
-
+```r
 slope = raster("./slope.nc")
-slope  # loads 1  of  4  bands
-
-slope@file@nbands  # 4 bands
-
 slope_stack = raster::stack("./slope.nc")
-slope_stack
-
 slope_cropped <- crop(slope_stack, M)
-
-# Mask raster stack using the vector
-
 slope_mask <- mask(slope_cropped, M)
-class(slope_mask)  # "RasterBrick"
-
-slope_mask@file@nbands  # Outputs 1 band but has 4
-slope_mask@data@names  # Nombre de las bandas: "X1" "X2" "X3" "X4"
-
-individual_slope <- unstack(slope_mask)  # Hay que hacer unstack para luego guardar cada raster individual
-class(individual_slope)  # list
-
-# Define names for each of the bands to be saved 
+individual_slope <- unstack(slope_mask) 
 
 variables <- as.factor(c("Slope min","Slope max","Slope range","Slope average"))
 
-# Save as ascii
-
 for(i in 1:length(variables)) {
-  writeRaster(individual_slope[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
+writeRaster(individual_slope[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
 }
+```
 
+----
+#### Soil: Upstream soil (maximum)
 
-#------------------------------------------------------------------------------------
-# Soil: Upstream soil (maximum)
-#------------------------------------------------------------------------------------
-
-rm(list=ls(all=TRUE))
-
+```r
 soil_max = raster("./soil_maximum.nc")
-soil_max  # loads 1  of  10  bands
-
-soil_max@file@nbands  # 10 bands
-
 soil_max_stack = raster::stack("./soil_maximum.nc")
-soil_max_stack
-
 soil_max_cropped <- crop(soil_max_stack, M)
-
-# Mask raster stack using the vector
-
 soil_max_mask <- mask(soil_max_cropped, M)
-class(soil_max_mask)  # "RasterBrick"
-
-soil_max_mask@file@nbands  # 10 bands
-soil_max_mask@data@names  # Nombre de las bandas: "X1" ... "X10"
-
-individual_soil_max <- unstack(soil_max_mask)  # Hay que hacer unstack para luego guardar cada raster individual
-class(individual_soil_max)  # list
-
-# Define names for each of the bands to be saved 
+individual_soil_max <- unstack(soil_max_mask)
 
 variables <- as.factor(c("Soil_max_01","Soil_max_02","Soil_max_03","Soil_max_04",
                          "Soil_max_05","Soil_max_06","Soil_max_07","Soil_max_08",
                          "Soil_max_09","Soil_max_10"))
 
-# Save as ascii
-
 for(i in 1:length(variables)) {
-  writeRaster(individual_soil_max[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
+writeRaster(individual_soil_max[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
 }
+```
+----
+#### Soil: Upstream soil (minimum)
 
-
-#------------------------------------------------------------------------------------
-# Soil: Upstream soil (minimum)
-#------------------------------------------------------------------------------------
-
-rm(list=ls(all=TRUE))
-
+```r
 soil_min = raster("./soil_minimum.nc")
-soil_min  # loads 1  of  10  bands
-
-soil_min@file@nbands  # 10 bands
-
 soil_min_stack = raster::stack("./soil_minimum.nc")
-soil_min_stack
-
 soil_min_cropped <- crop(soil_min_stack, M)
-
-# Mask raster stack using the vector
-
 soil_min_mask <- mask(soil_min_cropped, M)
-class(soil_min_mask)  # "RasterBrick"
-
-soil_min_mask@file@nbands  # 10 bands
-soil_min_mask@data@names  # Nombre de las bandas: "X1" ... "X10"
-
-individual_soil_min <- unstack(soil_min_mask)  # Hay que hacer unstack para luego guardar cada raster individual
-class(individual_soil_min)  # list
-
-# Define names for each of the bands to be saved 
+individual_soil_min <- unstack(soil_min_mask) 
 
 variables <- as.factor(c("Soil_min_01","Soil_min_02","Soil_min_03","Soil_min_04",
                          "Soil_min_05","Soil_min_06","Soil_min_07","Soil_min_08",
                          "Soil_min_09","Soil_min_10"))
 
-# Save as ascii
-
 for(i in 1:length(variables)) {
-  writeRaster(individual_soil_min[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
+writeRaster(individual_soil_min[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
 }
+```
+----
+#### Soil: Upstream soil (range)
 
-
-#------------------------------------------------------------------------------------
-# Soil: Upstream soil (range)
-#------------------------------------------------------------------------------------
-
-rm(list=ls(all=TRUE))
-
+```r
 soil_range = raster("./soil_range.nc")
-soil_range  # loads 1  of  10  bands
-
-soil_range@file@nbands  # 10 bands
-
 soil_range_stack = raster::stack("./soil_range.nc")
-soil_range_stack
-
 soil_range_cropped <- crop(soil_range_stack, M)
-
-# Mask raster stack using the vector
-
 soil_range_mask <- mask(soil_range_cropped, M)
-class(soil_range_mask)  # "RasterBrick"
-
-soil_range_mask@file@nbands  # 10 bands
-soil_range_mask@data@names  # Nombre de las bandas: "X1" ... "X10"
-
-individual_soil_range <- unstack(soil_range_mask)  # Hay que hacer unstack para luego guardar cada raster individual
-class(individual_soil_range)  # list
-
-# Define names for each of the bands to be saved 
+individual_soil_range <- unstack(soil_range_mask)
 
 variables <- as.factor(c("Soil_range_01","Soil_range_02","Soil_range_03","Soil_range_04",
                          "Soil_range_05","Soil_range_06","Soil_range_07","Soil_range_08",
                          "Soil_range_09","Soil_range_10"))
 
-# Save as ascii
-
 for(i in 1:length(variables)) {
-  writeRaster(individual_soil_range[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
+writeRaster(individual_soil_range[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
 }
+```
 
+----
+#### Soil: Upstream soil (average)
 
-#------------------------------------------------------------------------------------
-# Soil: Upstream soil (average)
-#------------------------------------------------------------------------------------
-
-rm(list=ls(all=TRUE))
-
+```r
 soil_avg = raster("./soil_weighted_average.nc")
-soil_avg  # loads 1  of  10  bands
-
-soil_avg@file@nbands  # 10 bands
-
 soil_avg_stack = raster::stack("./soil_weighted_average.nc")
-soil_avg_stack
-
 soil_avg_cropped <- crop(soil_avg_stack, M)
-
-# Mask raster stack using the vector
-
 soil_avg_mask <- mask(soil_avg_cropped, M)
-class(soil_avg_mask)  # "RasterBrick"
-
-soil_avg_mask@file@nbands  # 10 bands
-soil_avg_mask@data@names  # Nombre de las bandas: "X1" ... "X10"
-
-individual_soil_avg <- unstack(soil_avg_mask)  # Hay que hacer unstack para luego guardar cada raster individual
-class(individual_soil_avg)  # list
-
-# Define names for each of the bands to be saved 
+individual_soil_avg <- unstack(soil_avg_mask)
 
 variables <- as.factor(c("Soil_avg_01","Soil_avg_02","Soil_avg_03","Soil_avg_04",
                          "Soil_avg_05","Soil_avg_06","Soil_avg_07","Soil_avg_08",
                          "Soil_avg_09","Soil_avg_10"))
 
-# Save as ascii
-
 for(i in 1:length(variables)) {
-  writeRaster(individual_soil_avg[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
+writeRaster(individual_soil_avg[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
 }
+```
 
+----
+#### Check spatial resolution and raster extent for final environmental layers
 
-#----------------------------------------------------------------------------
-# Check spatial resolution and raster extent for final environmental layers
-#----------------------------------------------------------------------------
-
+```r
 mytable <- NULL
 
 path2 = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/" 
@@ -363,6 +234,5 @@ colnames(mytable) <- c("File","Resol.x","Resol.y","xmin","xmax","ymin","ymax")
 mytable
 
 xlsx::write.xlsx(mytable, file = "C:/Users/User/Documents/Analyses/Ticks ENM/Modeling/O_turicata/Raster_props_calibration.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
-
 ```
 
