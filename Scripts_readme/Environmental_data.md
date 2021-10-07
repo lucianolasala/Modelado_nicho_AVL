@@ -132,22 +132,16 @@ monthly_tmax_stack = raster::stack("./monthly_tmax_weighted_average.nc")
 monthly_tmax_cropped <- crop(monthly_tmax_stack, M)
 
 monthly_tmax_mask <- mask(monthly_tmax_cropped, M)
+```
 
 #### Pixel-wise stats for raster brick 
+>Reduction using mean: each layer represents the mean value for each month over the 1970-2000 period. Then, one can apply a pixel-wise reduction functions (mean, min, max, etc.) across layers to obtain summary statistics for each location (pixel) during this period.
 
-# Reduction using mean: each layer represents the mean value for each month over the 1970-2000
-# period. Then, one can apply a pixel-wise reduction functions (mean, min, max, etc.) 
-# across layers to obtain summary statistics for each location (pixel) during this period. 
-#---------------------------------------------------------------------------------------
-
+```r
 monthly_tmax_mask_mean = mean(monthly_tmax_mask)
-class(monthly_tmax_mask_mean)
-
-str(monthly_tmax_mask_mean)
-monthly_tmax_mask_mean@file@nbands  # 1
 
 writeRaster(monthly_tmax_mask_mean, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/Monthly maximum temperature", format = "GTiff", overwrite = TRUE)
-
+```
 
 #------------------------------------------------------------------------------------
 # Monthly minimum temperature (distance-weighted average)
