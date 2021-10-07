@@ -23,26 +23,14 @@ files
 
 ```r
 elevation = raster("./elevation.nc")
-class(elevation)
-elevation  # loads 1  of  2  bands (flow_acc)
-
-elevation@file@nbands  # 4 bands
 
 elevation_stack = raster::stack("./elevation.nc")
-elevation_stack
 
 elev_cropped <- crop(elevation_stack, M)
 
 elev_mask <- mask(elev_cropped, M)
-class(elev_mask)  # "RasterBrick"
-
-str(elev_mask)
-
-elev_mask@file@nbands  # Outputs 1 band but has 4
-elev_mask@data@names  # Nombre de las bandas: "X1" "X2" "X3" "X4" 
 
 individual_elevation <- unstack(vars_mask)  # Must unstack to save each raster separately
-class(individual_elevation)  # list
 
 variables <- as.factor(c("Elevation_min","Elevation_max","Elevation_range","Elevation_average"))
 
@@ -53,94 +41,52 @@ for(i in 1:length(variables)) {
 
 #### Flow
 
-
+```r
 rm(list=ls(all=TRUE))
 
 flow = raster("./flow_acc.nc")
-flow  # loads 1  of  2  bands (flow_acc)
-
-flow@file@nbands  # 2 bands
 
 flow_stack = raster::stack("./flow_acc.nc")
-flow_stack
 
 flow_cropped <- crop(flow_stack, M)
 
-# Mask raster stack using the vector
-
 flow_mask <- mask(flow_cropped, M)
-class(flow_mask)  # "RasterBrick"
 
-plot(flow_mask[[1]])
-str(flow_mask)
-
-flow_mask@file@nbands  # Outputs 1 band but has 2
-flow_mask@data@names  # Nombre de las bandas: "X1" "X2"
-
-individual_flow <- unstack(flow_mask)  # Hay que hacer unstack para luego guardar cada raster individual
-class(individual_flow)  # list
-
-# Define names for each of the bands to be saved 
+individual_flow <- unstack(flow_mask)  
 
 variables <- as.factor(c("Upstream stream grid cells","Upstream catchment grid cells"))
-
-# Save as ascii
 
 for(i in 1:length(variables)) {
   writeRaster(individual_flow[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
 }
+```
 
+#### Hydroclimatic variables
 
-#------------------------------------------------------------------------------------
-# Hydroclimatic variables
-#------------------------------------------------------------------------------------
-
-rm(list=ls(all=TRUE))
-
+```r
 hydroclim = raster("./hydroclim_weighted_average+sum.nc")
-hydroclim  # loads 1 of 19 bands
-
-hydroclim@file@nbands  # 19 bands
 
 hydroclim_stack = raster::stack("./hydroclim_weighted_average+sum.nc")
-hydroclim_stack
 
 hydroclimatic_cropped <- crop(hydroclim_stack, M)
 
-# Mask raster stack using the vector
-
 hydroclimatic_cropped_mask <- mask(hydroclimatic_cropped, M)
-class(hydroclimatic_cropped_mask)  # "RasterBrick"
 
-plot(hydroclimatic_cropped_mask[[1]])
-str(hydroclimatic_cropped_mask)
-
-hydroclimatic_cropped_mask@file@nbands  # 19
-hydroclimatic_cropped_mask@data@names  # Nombre de las bandas: "X1" ... "X19"
-
-individual_hydroclimatic <- unstack(hydroclimatic_cropped_mask)  # Hay que hacer unstack para luego guardar cada raster individual
-class(individual_hydroclimatic)  # list
-
-# Define names for each of the bands to be saved 
+individual_hydroclimatic <- unstack(hydroclimatic_cropped_mask)
 
 variables <- as.factor(c("Bioclim 1","Bioclim 2","Bioclim 3","Bioclim 4","Bioclim 5",
                          "Bioclim 6","Bioclim 7","Bioclim 8","Bioclim 9","Bioclim 10",
                          "Bioclim 11","Bioclim 12","Bioclim 13","Bioclim 14","Bioclim 15",
                          "Bioclim 16","Bioclim 17","Bioclim 18","Bioclim 19"))
 
-# Save as ascii
-
 for(i in 1:length(variables)) {
   writeRaster(individual_hydroclimatic[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
 }
+```
 
+#### Monthly upstream precipitation (distance-weighted sum)
 
-#------------------------------------------------------------------------------------
-# Monthly upstream precipitation (distance-weighted sum)
-#------------------------------------------------------------------------------------
-
-rm(list=ls(all=TRUE))
-
+```r
 upstream_prec = raster("./monthly_prec_weighted_sum.nc")
 upstream_prec  # loads 1 of 12 bands
 
@@ -174,35 +120,21 @@ str(upstream_prec_mean)
 upstream_prec_mean@file@nbands  # 1
 
 writeRaster(upstream_prec_mean, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/Monthly upstream precipitation", format = "GTiff", overwrite = TRUE)
+```
 
+#### Monthly maximum temperature (distance-weighted average)
 
-#------------------------------------------------------------------------------------
-# Monthly maximum temperature (distance-weighted average)
-#------------------------------------------------------------------------------------
-
-rm(list=ls(all=TRUE))
-
+```r
 monthly_tmax = raster("./monthly_tmax_weighted_average.nc")
-monthly_tmax  # loads 1 of 12 bands
-
-monthly_tmax@file@nbands  # 12 bands
 
 monthly_tmax_stack = raster::stack("./monthly_tmax_weighted_average.nc")
-monthly_tmax_stack
 
 monthly_tmax_cropped <- crop(monthly_tmax_stack, M)
 
-# Mask raster stack using the vector
-
 monthly_tmax_mask <- mask(monthly_tmax_cropped, M)
-class(monthly_tmax_mask)  # "RasterBrick"
 
-monthly_tmax_mask@file@nbands  # 12
-monthly_tmax_mask@data@names  # Nombre de las bandas: "X1" ... "X12"
+#### Pixel-wise stats for raster brick 
 
-#---------------------------------------------------------------------------------------
-# Pixel-wise stats for raster brick 
-#---------------------------------------------------------------------------------------
 # Reduction using mean: each layer represents the mean value for each month over the 1970-2000
 # period. Then, one can apply a pixel-wise reduction functions (mean, min, max, etc.) 
 # across layers to obtain summary statistics for each location (pixel) during this period. 
@@ -256,7 +188,7 @@ str(monthly_tmin_mask_mean)
 monthly_tmin_mask_mean@file@nbands  # 1
 
 writeRaster(monthly_tmin_mask_mean, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/Monthly minimum temperature", format = "GTiff", overwrite = TRUE)
-
+```
 
 #------------------------------------------------------------------------------------
 # Slope
