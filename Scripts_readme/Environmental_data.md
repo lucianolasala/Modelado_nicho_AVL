@@ -25,9 +25,9 @@ files = list.files(path = path1, pattern = ".nc$", all.files = TRUE, full.names 
 files 
 ```
 
-####Elevation
+#### Elevation
 
-
+```r
 elevation = raster("./elevation.nc")
 class(elevation)
 elevation  # loads 1  of  2  bands (flow_acc)
@@ -62,7 +62,7 @@ variables <- as.factor(c("Elevation_min","Elevation_max","Elevation_range","Elev
 for(i in 1:length(variables)) {
   writeRaster(individual_elevation[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
 }
-
+```
 
 #------------------------------------------------------------------------------------
 # Flow
