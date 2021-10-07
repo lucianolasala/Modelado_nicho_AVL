@@ -6,7 +6,7 @@
 
 ><sup>1</sup>Instituto de Ciencias Biológicas y Biomédicas del Sur (CONICET-UNS), Bahía Blanca, Argentina.  
 <sup>2</sup>Cátedra de Parasitología Clínica, Departamento de Biología 
-Bioquímica y Farmacia. Universidad Nacional del Sur
+Bioquímica y Farmacia. Universidad Nacional del Sur  
 <sup>3</sup>Cátedra de Microbiología y Parasitología, Departamento de Biología 
 Bioquímica y Farmacia. Universidad Nacional del Sur
 
