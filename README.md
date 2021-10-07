@@ -2,7 +2,7 @@
 
 <img src="https://user-images.githubusercontent.com/20196847/132431276-35bf910b-ab3c-48c0-86c0-9efa52fb5a93.jpg" height="100" width="100" img align="right">
 
-**Luciano F. La Sala**<sup>1,2</sup>, **Viviana Randazzo**<sup>2,3</sup>, **Leandro Lucchi**<sup>2</sup>, **Norma Basabe**<sup>2</sup>, **Elena Visciarelli**<sup>2</sup>
+**Luciano F. La Sala**<sup>1,2</sup>, **Leandro Lucchi**<sup>2</sup>, **Norma Basabe**<sup>2</sup>, **Elena Visciarelli**<sup>2</sup>, **Viviana Randazzo**<sup>2,3</sup>
 
 ><sup>1</sup>Instituto de Ciencias Biológicas y Biomédicas del Sur (CONICET-UNS), Bahía Blanca, Argentina.  
 <sup>2</sup>Cátedra de Parasitología Clínica, Departamento de Biología 
