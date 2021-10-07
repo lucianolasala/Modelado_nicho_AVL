@@ -108,11 +108,9 @@ valid_watersheds = watersheds[!(watersheds$BASIN_ID == 3749|
                                   watersheds$BASIN_ID == 116697|
                                   watersheds$BASIN_ID == 131432),]
 
-remove(valid_watersheds)
-
 plot(valid_watersheds$geometry, col = "blue")
 
-st_write(valid_watersheds, "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Valid watersheds/Watersheds.gpkg", driver = "gpkg")
+st_write(valid_watersheds, "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Valid watersheds/Valid_watersheds.gpkg", driver = "gpkg")
 
 
 #------------------------------------------------------------------------
