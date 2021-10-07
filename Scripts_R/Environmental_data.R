@@ -479,13 +479,19 @@ for(i in 1:length(variables)) {
 
 mytable <- NULL
 
-for(i in 1:23){
+path2 = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/" 
+setwd("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/")
+
+files = list.files(path = path2, pattern = ".tif$", all.files = TRUE, full.names = FALSE)
+files 
+
+for(i in 1:72){
   r <- raster(files[i])
   mytable <- rbind(mytable, c(files[i], round(c(res(r), as.vector(extent(r))), 8)))
 }
 
-colnames(mytable1) <- c("File","Resol.x","Resol.y","xmin","xmax","ymin","ymax")
-mytable1
+colnames(mytable) <- c("File","Resol.x","Resol.y","xmin","xmax","ymin","ymax")
+mytable
 
 xlsx::write.xlsx(mytable, file = "C:/Users/User/Documents/Analyses/Ticks ENM/Modeling/O_turicata/Raster_props_calibration.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
 
