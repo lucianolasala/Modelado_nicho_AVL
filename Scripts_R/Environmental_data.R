@@ -106,220 +106,53 @@ for(i in 1:length(variables)) {
 }
 
 
+#------------------------------------------------------------------------------------
+# Hydroclimatic variables
+#------------------------------------------------------------------------------------
 
+hydroclim = raster("./hydroclim_weighted_average+sum.nc")
+hydroclim  # loads 1 of 19 bands
 
+hydroclim@file@nbands  # 19 bands
 
+hydroclim_stack = raster::stack("./hydroclim_weighted_average+sum.nc")
+hydroclim_stack
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Crop raster stack with 19 variables using the vector
-
-allrasters <- stack(files)
-class(allrasters)  # "RasterStack"
-
-cropped <- crop(allrasters, M)
-extent(cropped[[1]])
-
-str(cropped)
-class(cropped)  # Changes from RasterStack to RasterBrick
-
-plot(cropped[[1]])
-
+hydroclimatic_cropped <- crop(hydroclim_stack, M)
 
 # Mask raster stack using the vector
 
-vars_mask <- mask(cropped, M)
-class(vars_mask)  # "RasterBrick"
+hydroclimatic_cropped_mask <- mask(hydroclimatic_cropped, M)
+class(hydroclimatic_cropped_mask)  # "RasterBrick"
 
-plot(vars_mask[[1]])
-str(vars_mask)
+plot(hydroclimatic_cropped_mask[[1]])
+str(hydroclimatic_cropped_mask)
 
-vars_mask@file@nbands  # 105 bands
-vars_mask@data@names  # Nombre de las bandas 
+hydroclimatic_cropped_mask@file@nbands  # 19
+hydroclimatic_cropped_mask@data@names  # Nombre de las bandas: "X1" ... "X19"
 
-up_elevation <-vars_mask[[1:4]]
-up_elevation  
+individual_hydroclimatic <- unstack(hydroclimatic_cropped_mask)  # Hay que hacer unstack para luego guardar cada raster individual
+class(individual_hydroclimatic)  # list
 
-individual_r <- unstack(vars_mask)  # Hay que hacer unstack para luego guardar cada raster individual
-class(individual_r)  # list
+# Define names for each of the bands to be saved 
 
-plot(individual_r[[1]])
-
-
-variables <- as.factor(c("elevation","flow_acc",                      
-                         "geology_weighted_sum.nc","hydroclim_average+sum",         
-                         "hydroclim_weighted_average+sum","landcover_average",             
-                         "landcover_maximum","landcover_minimum",             
-                         "landcover_range","landcover_weighted_average",    
-                         "monthly_prec_sum","monthly_prec_weighted_sum",     
-                         "monthly_tmax_average","monthly_tmax_weighted_average", 
-                         "monthly_tmin_average","monthly_tmin_weighted_average", 
-                         "quality_control","slope","soil_average","soil_maximum",                  
-                         "soil_minimum","soil_range","soil_weighted_average"))
-
-# Guardar como GTiff to keep multiple bands if necessary
-
-for(i in 1:length(variables)) {
-  writeRaster(individual_r[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_1/", variables[i]), format = "GTiff", options = "INTERLEAVE=BAND", overwrite=TRUE)
-}
-
-
-
-
-
-
-
-#------------------------------------------------------------------------------------
-# Procesamiento y cálculo de estadísticas en capas individuales
-#------------------------------------------------------------------------------------
-
-path2 = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_1/"
-
-setwd("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_1/")
-
-files = list.files(path = path2, pattern = ".asc$", all.files = TRUE, full.names = FALSE)
-files 
-
-#------------------------------------------------------------------------------------
-# Topography: Stream length and flow accumulation (two bands)
-#------------------------------------------------------------------------------------
-
-flow = raster("./flow_acc.asc")
-class(flow)
-flow  # loads 1  of  2  bands (flow_acc)
-
-flow@file@nbands  # 1 band
-
-flow_stack = raster::stack("./flow_acc.asc")
-flow_stack
-
-flow_ind <- unstack(flow_stack)
-class(flow_ind)  # list
-
-plot(flow_ind[[1]])
-
-variables <- as.factor(c("Flow_length","Flow_acc"))
+variables <- as.factor(c("Bioclim 1","Bioclim 2","Bioclim 3","Bioclim 4","Bioclim 5",
+                         "Bioclim 6","Bioclim 7","Bioclim 8","Bioclim 9","Bioclim 10",
+                         "Bioclim 11","Bioclim 12","Bioclim 13","Bioclim 14","Bioclim 15",
+                         "Bioclim 16","Bioclim 17","Bioclim 18","Bioclim 19"))
 
 # Save as ascii
 
 for(i in 1:length(variables)) {
-  writeRaster(flow_ind[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii/", variables[i]), format = "ascii")
+  writeRaster(individual_flow[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
 }
 
 
-#------------------------------------------------------------------------------------
-# Topography: Upstream elevation (min, max, range, avg)
-#------------------------------------------------------------------------------------
-
-topography_stack <- raster::stack("./elevation.nc")
-
-topography_ind <- unstack(topography_stack)
-
-variables <- as.factor(c("Minimum elevation","Maximum elevation","Elevation range","Average elevation"))
-
-# Save as ascii
-
-for(i in 1:length(variables)) {
-  writeRaster(topography_ind[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii/", variables[i]), format = "ascii")
-}
-
-
-#------------------------------------------------------------------------------------
-# Topography: Upstream slope (min, max, range, avg)
-#------------------------------------------------------------------------------------
-
-topography_slope <- raster::stack("./slope.nc")
-
-slope_ind <- unstack(topography_slope)
-
-variables <- as.factor(c("Minimum slope","Maximum slope","Slope range","Average slope"))
-
-# Save as ascii
-
-for(i in 1:length(variables)) {
-  writeRaster(slope_ind[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii/", variables[i]), format = "ascii")
-}
-
-
-#------------------------------------------------------------------------------------
-# Climate	Monthly minimum temperature (average)
-# Raster stack with 12 bands (one for each month).
-# First we crop global extent to calibration area extent, then mask, and fillany
-# calculate mean
-#------------------------------------------------------------------------------------
-
-monthly_tmin <- raster::stack("./monthly_tmin_average.nc")
-
-monthly_tmin_ind <- unstack(monthly_tmin)
 
 
 
-# Si precisaramos guardar la variable para cada mes en el serie temporal:
 
-jan = monthly_tmin_ind[[1]]
-writeRaster(jan, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii/Min. monthly air temperature January", format = "ascii", overwrite=TRUE)
 
-variables <- as.factor(c("Min. monthly air temperature January",
-                         "Min. monthly air temperature February",
-                         "Min. monthly air temperature March",
-                         "Min. monthly air temperature April",
-                         "Min. monthly air temperature May",
-                         "Min. monthly air temperature June",
-                         "Min. monthly air temperature July",
-                         "Min. monthly air temperature August",
-                         "Min. monthly air temperature September",
-                         "Min. monthly air temperature October",
-                         "Min. monthly air temperature November",
-                         "Min. monthly air temperature December"))
-
-# Save as ascii
-
-for(i in 1:length(variables)) {
-  writeRaster(monthly_tmin_ind[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii/", variables[i]), format = "ascii", overwrite=TRUE)
-}
-
-#------------------------------------------------------------------------------------
-# Climate	Monthly maximum temperature (average)
-#------------------------------------------------------------------------------------
-
-monthly_tmax <- raster::stack("./monthly_tmax_average.nc")
-
-monthly_tmax_ind <- unstack(monthly_tmax)
-
-variables <- as.factor(c("Max. monthly air temperature January",
-                         "Max. monthly air temperature February",
-                         "Max. monthly air temperature March",
-                         "Max. monthly air temperature April",
-                         "Max. monthly air temperature May",
-                         "Max. monthly air temperature June",
-                         "Max. monthly air temperature July",
-                         "Max. monthly air temperature August",
-                         "Max. monthly air temperature September",
-                         "Max. monthly air temperature October",
-                         "Max. monthly air temperature November",
-                         "Max. monthly air temperature December"))
-
-# Save as ascii
-
-for(i in 1:length(variables)) {
-  writeRaster(monthly_tmax_ind[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii/", variables[i]), format = "ascii", overwrite=TRUE)
-}
 
 
 
