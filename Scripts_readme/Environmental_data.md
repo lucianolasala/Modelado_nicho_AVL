@@ -3,7 +3,6 @@
 ```r
 
 rm(list=ls(all=TRUE))
-
 M <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/Watersheds_AVL.gpkg")
 ```
 
@@ -14,7 +13,6 @@ variable and aggregation type (e.g. all 12 average landcover layers).
 ```r
 path1 = ("C:/Users/User/Documents/Analyses/AVL/Rasters/Rasters_procesar/") 
 setwd("C:/Users/User/Documents/Analyses/AVL/Rasters/Rasters_procesar/")
-
 files = list.files(path = path1, pattern = ".nc$", all.files = TRUE, full.names = FALSE)
 files 
 ```
@@ -23,15 +21,10 @@ files
 
 ```r
 elevation = raster("./elevation.nc")
-
 elevation_stack = raster::stack("./elevation.nc")
-
 elev_cropped <- crop(elevation_stack, M)
-
 elev_mask <- mask(elev_cropped, M)
-
-individual_elevation <- unstack(vars_mask)  # Must unstack to save each raster separately
-
+individual_elevation <- unstack(vars_mask)
 variables <- as.factor(c("Elevation_min","Elevation_max","Elevation_range","Elevation_average"))
 
 for(i in 1:length(variables)) {
@@ -42,18 +35,11 @@ for(i in 1:length(variables)) {
 #### Flow
 
 ```r
-rm(list=ls(all=TRUE))
-
 flow = raster("./flow_acc.nc")
-
 flow_stack = raster::stack("./flow_acc.nc")
-
 flow_cropped <- crop(flow_stack, M)
-
 flow_mask <- mask(flow_cropped, M)
-
 individual_flow <- unstack(flow_mask)  
-
 variables <- as.factor(c("Upstream stream grid cells","Upstream catchment grid cells"))
 
 for(i in 1:length(variables)) {
@@ -65,13 +51,9 @@ for(i in 1:length(variables)) {
 
 ```r
 hydroclim = raster("./hydroclim_weighted_average+sum.nc")
-
 hydroclim_stack = raster::stack("./hydroclim_weighted_average+sum.nc")
-
 hydroclimatic_cropped <- crop(hydroclim_stack, M)
-
 hydroclimatic_cropped_mask <- mask(hydroclimatic_cropped, M)
-
 individual_hydroclimatic <- unstack(hydroclimatic_cropped_mask)
 
 variables <- as.factor(c("Bioclim 1","Bioclim 2","Bioclim 3","Bioclim 4","Bioclim 5",
@@ -88,15 +70,12 @@ for(i in 1:length(variables)) {
 
 ```r
 upstream_prec = raster("./monthly_prec_weighted_sum.nc")
-
 upstream_prec_stack = raster::stack("./monthly_prec_weighted_sum.nc")
-
 upstream_prec_cropped <- crop(upstream_prec_stack, M)
-
 upstream_prec_mask <- mask(upstream_prec_cropped, M)
 ```
 
-##### Pixel-wise stats for raster brick 
+* Pixel-wise stats for raster brick 
 >Reduction using mean: each layer represents the mean value for each month over the 1970-2000 period. Then, one can apply a pixel-wise reduction functions (mean, min, max, etc.) across layers to obtain summary statistics for each location (pixel) during this period. 
 
 upstream_prec_mean = mean(upstream_prec_mask)
