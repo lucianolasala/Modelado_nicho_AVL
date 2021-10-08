@@ -1,10 +1,15 @@
 ----
->Load watersheds to be used as calibration area (M)
+>Load watersheds to be used as calibration area (M). Watersheds data were obtained from HydroSHEDS (https://www.hydrosheds.org/), and they were processed to select only those where FLA were detected.
+Global, remote-sensing supported environmental layers were used for modeling, and climateEnvironmental data were obtained from EarthEnv (http://www.earthenv.org/streams) at 1 km resolution.
 
 ```r
+M1 <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/Watersheds_dissolved.shp")
+M2 <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/Bs.As_province.gpkg")
+M3 <- st_intersection(M1, M2)
+class(M3)
+plot(M3$geom)
 
-rm(list=ls(all=TRUE))
-M <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/Watersheds_AVL.gpkg")
+st_write(M3, "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/M_final.gpkg", driver = "gpkg")
 ```
 
 >Set working directory, load environmental variables (global extent), and process by cropping, masking, calculating summary statistics, and exploring raster extent and resolution.
