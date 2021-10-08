@@ -16,9 +16,9 @@ Layers are available as near-global netCDF-4 files, where each file contains one
 variable and aggregation type (e.g. all 12 average landcover layers).
 
 ```r
-path1 = ("C:/Users/User/Documents/Analyses/AVL/Rasters/Rasters_procesar/") 
+path = ("C:/Users/User/Documents/Analyses/AVL/Rasters/Rasters_procesar/") 
 setwd("C:/Users/User/Documents/Analyses/AVL/Rasters/Rasters_procesar/")
-files = list.files(path = path1, pattern = ".nc$", all.files = TRUE, full.names = FALSE)
+files = list.files(path = path, pattern = ".nc$", all.files = TRUE, full.names = FALSE)
 files 
 ```
 ----
