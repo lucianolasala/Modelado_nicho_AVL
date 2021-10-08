@@ -148,7 +148,7 @@ variables <- as.factor(c("Bioclim 1","Bioclim 2","Bioclim 3","Bioclim 4","Biocli
                          "Bioclim 11","Bioclim 12","Bioclim 13","Bioclim 14","Bioclim 15",
                          "Bioclim 16","Bioclim 17","Bioclim 18","Bioclim 19"))
 
-# Save as ascii
+# Save as GTiff
 
 for(i in 1:length(variables)) {
   writeRaster(individual_hydroclimatic[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
@@ -199,8 +199,6 @@ writeRaster(upstream_prec_mean, filename = "C:/Users/User/Documents/Analyses/AVL
 #------------------------------------------------------------------------------------
 # Monthly maximum temperature (distance-weighted average)
 #------------------------------------------------------------------------------------
-
-rm(list=ls(all=TRUE))
 
 monthly_tmax = raster("./monthly_tmax_weighted_average.nc")
 monthly_tmax  # loads 1 of 12 bands
@@ -389,7 +387,7 @@ variables <- as.factor(c("Soil_min_01","Soil_min_02","Soil_min_03","Soil_min_04"
                          "Soil_min_05","Soil_min_06","Soil_min_07","Soil_min_08",
                          "Soil_min_09","Soil_min_10"))
 
-# Save as ascii
+# Save as GTifff
 
 for(i in 1:length(variables)) {
   writeRaster(individual_soil_min[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
@@ -429,7 +427,7 @@ variables <- as.factor(c("Soil_range_01","Soil_range_02","Soil_range_03","Soil_r
                          "Soil_range_05","Soil_range_06","Soil_range_07","Soil_range_08",
                          "Soil_range_09","Soil_range_10"))
 
-# Save as ascii
+# Save as GTiff
 
 for(i in 1:length(variables)) {
   writeRaster(individual_soil_range[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
@@ -457,7 +455,7 @@ soil_avg_cropped <- crop(soil_avg_stack, M)
 soil_avg_mask <- mask(soil_avg_cropped, M)
 class(soil_avg_mask)  # "RasterBrick"
 
-soil_avg_mask@file@nbands  # 10 bands
+soil_avg_mask@file@nbands  # 1 band of 10
 soil_avg_mask@data@names  # Nombre de las bandas: "X1" ... "X10"
 
 individual_soil_avg <- unstack(soil_avg_mask)  # Hay que hacer unstack para luego guardar cada raster individual
@@ -469,7 +467,7 @@ variables <- as.factor(c("Soil_avg_01","Soil_avg_02","Soil_avg_03","Soil_avg_04"
                          "Soil_avg_05","Soil_avg_06","Soil_avg_07","Soil_avg_08",
                          "Soil_avg_09","Soil_avg_10"))
 
-# Save as ascii
+# Save as GTiff
 
 for(i in 1:length(variables)) {
   writeRaster(individual_soil_avg[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
@@ -497,17 +495,4 @@ colnames(mytable) <- c("File","Resol.x","Resol.y","xmin","xmax","ymin","ymax")
 mytable
 
 xlsx::write.xlsx(mytable, file = "C:/Users/User/Documents/Analyses/Ticks ENM/Modeling/O_turicata/Raster_props_calibration.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
-
-
-#----------------------------------------------------------------------------
-# Crop and mask to Bs. As. province
-#----------------------------------------------------------------------------
-
-rm(list=ls(all=TRUE))
-
-path = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/" 
-setwd("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/")
-
-files = list.files(path = path, pattern = ".tif$", all.files = TRUE, full.names = FALSE)
-files 
 
