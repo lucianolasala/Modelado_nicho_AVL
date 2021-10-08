@@ -1,5 +1,5 @@
 ----
->Load watersheds to be used as calibration area (M). Watersheds data were obtained from HydroSHEDS (https://www.hydrosheds.org/), and they were processed to select only those where FLA were detected.
+>Watersheds data were used as calibration area (M) and were obtained from HydroSHEDS (https://www.hydrosheds.org/). Only watersheds where FLA were detected were considered, following a biome approach for the selection of M.
 Global, remote-sensing supported environmental layers were used for modeling, and climateEnvironmental data were obtained from EarthEnv (http://www.earthenv.org/streams) at 1 km resolution.
 
 ```r
