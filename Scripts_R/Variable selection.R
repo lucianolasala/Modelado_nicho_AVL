@@ -31,7 +31,7 @@ vnames
 
 mytable <- NULL
 
-for(i in 1:72){
+for(i in 1:40){
   r <- raster(files[i])
   mytable <- rbind(mytable, c(files[i], round(c(res(r), as.vector(extent(r))), 8)))
 }
@@ -39,7 +39,7 @@ for(i in 1:72){
 colnames(mytable) <- c("File","Resol.x","Resol.y","xmin","xmax","ymin","ymax")
 mytable
 
-xlsx::write.xlsx(mytable, file = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/Raster_props_calibration.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
+xlsx::write.xlsx(mytable, file = "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Raster_props_calibration.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
 
 
 #------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ length(sm)
 
 dt <- NULL
 
-for(i in 1:72){
+for(i in 1:40){
     st <- read_stars(files[i]) %>% set_names("z")
     dt <- cbind(dt, st$z[sm])
 }
@@ -76,21 +76,14 @@ dt <- dt %>%
 
 dim(dt)
 head(dt)
-is.matrix(dt)
 
 write.table(dt, file = "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matriz_vars.txt")
 
-dt = read.table("C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/dt.txt", header = TRUE)
+dt = read.table("C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matriz_vars.txt", header = TRUE)
 
 class(dt)  # "data.frame"
 dim(dt)    # 10000 (rows) * 72 (columns)
 summary(dt)
-
-dt[,49]  # All 240
-
-dt1 = dt[,-49]  # Remove col. 49 which has unique values (240) and conflicts with cor by producing NA
-head(dt1)
-
 
 # Explore correlation and remove highly correlated variables
 # Remove each variable in turn and re-run this bit until all correlations are below 0.9.
@@ -105,31 +98,46 @@ get.corr <- function(x){
         as_tibble() %>%
         mutate(cor = abs(cor)) %>%
         arrange(desc(cor)) %>%
-        filter(cor >= .9)
+        filter(cor >= .8)
     return(crr)
 }
 
 cr <- get.corr(dt)
 
-to.remove <- names(sort(table(c(cr$v1, cr$v2)), decreasing=TRUE))
+to.remove <- names(sort(table(c(cr$v1, cr$v2)), decreasing = TRUE))
+to.remove
+
 
 # Extract each variable in turn and the run the flattenCorrMatrix function:
 
 while(length(to.remove) > 0){
-    dt <- dt %>%
-        dplyr::select(-to.remove[1])
-    cr <- get.corr(dt)
-    to.remove <- names(sort(table(c(cr$v1,cr$v2)), decreasing = TRUE))
+  
+  dt <- dt %>%
+    dplyr::select(-as.numeric(to.remove[1]))
+  cr <- get.corr(dt)
+  to.remove <- names(sort(table(c(cr$v1,cr$v2)), decreasing=TRUE))
 }
 
+dt
+dim(dt)  # 10000 * 19
+is.list(dt)
 
+write.table(dt, file = "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matriz_vars_final.txt")
 
 
 #----------------------------------------------------------------
 # LFLS. Correlation. Uso de funcion rcorr del paquete Hmisc
 #----------------------------------------------------------------
 
-cor = Hmisc::rcorr(dt1, type = "spearman")
+matrix_final = read.table("C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matriz_vars_final.txt", header = TRUE)
+is.matrix(matrix_final)
+is.data.frame(matrix_final)
+
+mat = as.matrix(matrix_final)
+is.matrix(mat)
+
+cor = Hmisc::rcorr(mat, type = "spearman")
+
 class(cor)
 str(cor)
 is.list(cor)
@@ -140,113 +148,51 @@ cor$n
 
 # Extraigo el elemento r de la lista  
 
-DF2 <- cor$r
+DF <- cor$r
 
-class(DF2)  # Matrix
-dim(DF2)    # 71*71
+class(DF)  # Matrix
+dim(DF)    # 19*19
+colnames(DF)
 
+colnames(DF) <- c("Bio13","Bio15","Bio2",                    
+                  "Bio3","Bio5","Bio7","Month min temp.","Slope min",
+                  "Slope range","Soil_avg_01","Soil_avg_02","Soil_avg_04",
+                  "Soil_avg_05","Soil_avg_06","Soil_avg_07","Soil_avg_08",
+                  "Soil_avg_09","Soil_avg_10","Upstream grid cells")
 
-colnames(DF2) <- c("Bioclim 1","Bioclim 10",                    
-                  "Bioclim 11","Bioclim 12",                    
-                  "Bioclim 13","Bioclim 14",                    
-                  "Bioclim 15","Bioclim 16",                    
-                  "Bioclim 17","Bioclim 18",                    
-                  "Bioclim 19","Bioclim 2",                     
-                  "Bioclim 3","Bioclim 4",                     
-                  "Bioclim 5","Bioclim 6",                     
-                  "Bioclim 7","Bioclim 8",                     
-                  "Bioclim 9","Elevation_average",             
-                  "Elevation_max","Elevation_min",                 
-                  "Elevation_range","Monthly maximum temperature",   
-                  "Monthly minimum temperature","Monthly upstream precipitation",
-                  "Slope average","Slope max",                     
-                  "Slope min","Slope range",                  
-                  "Soil_avg_01","Soil_avg_02",                   
-                  "Soil_avg_03","Soil_avg_04",                   
-                  "Soil_avg_05","Soil_avg_06",                  
-                  "Soil_avg_07","Soil_avg_08",                   
-                  "Soil_avg_09","Soil_avg_10",                   
-                  "Soil_max_01","Soil_max_02",                   
-                  "Soil_max_03","Soil_max_04",                   
-                  "Soil_max_05","Soil_max_06",                   
-                  "Soil_max_07","Soil_max_08",                   
-                  "Soil_max_10",                   
-                  "Soil_min_01","Soil_min_02",                   
-                  "Soil_min_03","Soil_min_04",                   
-                  "Soil_min_05","Soil_min_06",                   
-                  "Soil_min_07","Soil_min_08",                   
-                  "Soil_min_09","Soil_min_10",                  
-                  "Soil_range_01","Soil_range_02",                 
-                  "Soil_range_03","Soil_range_04",                 
-                  "Soil_range_05","Soil_range_06",                 
-                  "Soil_range_07","Soil_range_08",                 
-                  "Soil_range_09","Soil_range_10",                 
-                  "Upstream catchment grid cells","Upstream stream grid cells")
+rownames(DF) <- c("Bio13","Bio15","Bio2",                    
+                   "Bio3","Bio5","Bio7","Month min temp.","Slope min",
+                   "Slope range","Soil_avg_01","Soil_avg_02","Soil_avg_04",
+                   "Soil_avg_05","Soil_avg_06","Soil_avg_07","Soil_avg_08",
+                   "Soil_avg_09","Soil_avg_10","Upstream grid cells")
+DF
+summary(DF)
 
-rownames(DF2) <- c("Bioclim 1","Bioclim 10",                    
-                  "Bioclim 11","Bioclim 12",                    
-                  "Bioclim 13","Bioclim 14",                    
-                  "Bioclim 15","Bioclim 16",                    
-                  "Bioclim 17","Bioclim 18",                    
-                  "Bioclim 19","Bioclim 2",                     
-                  "Bioclim 3","Bioclim 4",                     
-                  "Bioclim 5","Bioclim 6",                     
-                  "Bioclim 7","Bioclim 8",                     
-                  "Bioclim 9","Elevation_average",             
-                  "Elevation_max","Elevation_min",                 
-                  "Elevation_range","Monthly maximum temperature",   
-                  "Monthly minimum temperature","Monthly upstream precipitation",
-                  "Slope average","Slope max",                     
-                  "Slope min","Slope range",                  
-                  "Soil_avg_01","Soil_avg_02",                   
-                  "Soil_avg_03","Soil_avg_04",                   
-                  "Soil_avg_05","Soil_avg_06",                  
-                  "Soil_avg_07","Soil_avg_08",                   
-                  "Soil_avg_09","Soil_avg_10",                   
-                  "Soil_max_01","Soil_max_02",                   
-                  "Soil_max_03","Soil_max_04",                   
-                  "Soil_max_05","Soil_max_06",                   
-                  "Soil_max_07","Soil_max_08",                   
-                  "Soil_max_10",                   
-                  "Soil_min_01","Soil_min_02",                   
-                  "Soil_min_03","Soil_min_04",                   
-                  "Soil_min_05","Soil_min_06",                   
-                  "Soil_min_07","Soil_min_08",                   
-                  "Soil_min_09","Soil_min_10",                  
-                  "Soil_range_01","Soil_range_02",                 
-                  "Soil_range_03","Soil_range_04",                 
-                  "Soil_range_05","Soil_range_06",                 
-                  "Soil_range_07","Soil_range_08",                 
-                  "Soil_range_09","Soil_range_10",                 
-                  "Upstream catchment grid cells","Upstream stream grid cells")
-DF2
+class(DF)  # Matrix
+dim(DF)
 
-summary(DF2)
-
-class(DF2)  # Matrix
-dim(DF2)
-
-write.xlsx(cor1$r, "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/Matrix_r.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
-write.xlsx(cor1$P, "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/Matrix_P.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
-
-write.xlsx(DF2, "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/Matrix.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(cor$r, "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_r.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(cor$P, "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_P.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(DF, "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
 
 # Compute a matrix of correlation p-values
 
-p.mat <- cor1$P  # rstatix
+p.mat <- cor$P  # rstatix
 p.mat
 plot.new()
 
-corr_plot_1 <- ggcorrplot(DF, outline.col = "white", type = "lower", 
-                          tl.cex = 12, tl.col = "black", tl.srt = 90, 
+corr_plot <- ggcorrplot(DF, outline.col = "white", type = "lower", 
+                          tl.cex = 10, tl.col = "black", tl.srt = 90, 
                           ggtheme = ggplot2::theme_gray, sig.level = 0.05, 
                           insig = "pch", p.mat = p.mat)
 
+corr_plot
+
+
+corr_plot_1 <- corrplot(DF, order = "hclust", tl.cex = 0.8)
 corr_plot_1
 
-corr_plot_2 <- corrplot(DF, order = "hclust")
-
-cowplot::save_plot(plot = corr_plot, filename = "C:/Users/User/Documents/Analyses/Ticks ENM/Modeling/O_turicata/Cor_plot.png", type = "cairo", base_height = 8, base_width = 8)
+cowplot::save_plot(corr_plot_1, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Corr_plot.png", type = "cairo", base_height = 8, base_width = 8)
 
 #-------------------------------------------------------------------------
 # Introduction to Feature selection for bioinformaticians using R, 
