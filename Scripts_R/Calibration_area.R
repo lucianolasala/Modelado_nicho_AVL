@@ -87,6 +87,7 @@ class(arg)
 str(arg)
 
 bsas = arg %>% filter(NAME_1 == "Buenos Aires")
+plot.new()
 plot(bsas$geometry, add = TRUE)
 
 # Result: none of the invalid geometries corresponds with those to be used as M. 
@@ -130,7 +131,7 @@ head(avl_df)
 
 colnames(avl_df) <- c("Long", "Lat")  # Name columns Long and Lat
 head(avl_df)
-length(avl_df$Long)  # 96
+length(avl_df$Long)  # 37
 
 
 #------------------------------------------------------------------------------------
@@ -174,24 +175,22 @@ unique_water
 # Select watersheds by their ID (long way)
 #----------------------------------------------------------------------
 
-unique_watersheds_occs = watersheds %>% filter(BASIN_ID == 61397| 
-                                        BASIN_ID == 61676|
-                                        BASIN_ID == 62368|
-                                        BASIN_ID == 62779|
-                                        BASIN_ID == 59931|
-                                        BASIN_ID == 63766|
+unique_watersheds_occs = watersheds %>% filter(BASIN_ID == 63766| 
                                         BASIN_ID == 63524|
-                                        BASIN_ID == 61957|
-                                        BASIN_ID == 61832|
-                                        BASIN_ID == 61863|
+                                        BASIN_ID == 61973|
                                         BASIN_ID == 61843|
-                                        BASIN_ID == 61888|
-                                        BASIN_ID == 58476|
-                                        BASIN_ID == 61712|
+                                        BASIN_ID == 61832|
+                                        BASIN_ID == 62779| 
+                                        BASIN_ID == 61712| 
                                         BASIN_ID == 61032|
+                                        BASIN_ID == 59931|
                                         BASIN_ID == 60630|
                                         BASIN_ID == 60671|
-                                        BASIN_ID == 60734)
+                                        BASIN_ID == 60734|
+                                        BASIN_ID == 62368|
+                                        BASIN_ID == 61676|
+                                        BASIN_ID == 61397|
+                                        BASIN_ID == 58476)
 class(unique_watersheds_occs)
 plot(unique_watersheds_occs$geom)
 

@@ -193,7 +193,7 @@ class(upstream_prec_mean)
 str(upstream_prec_mean)
 upstream_prec_mean@file@nbands  # 1
 
-writeRaster(upstream_prec_mean, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/Monthly upstream precipitation", format = "GTiff", overwrite = TRUE)
+writeRaster(upstream_prec_mean, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/Monthly upstream mean precipitation", format = "GTiff", overwrite = TRUE)
 
 
 #------------------------------------------------------------------------------------
@@ -307,7 +307,7 @@ class(individual_slope)  # list
 
 variables <- as.factor(c("Slope min","Slope max","Slope range","Slope average"))
 
-# Save as ascii
+# Save as GTiff
 
 for(i in 1:length(variables)) {
   writeRaster(individual_slope[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
@@ -347,7 +347,7 @@ variables <- as.factor(c("Soil_max_01","Soil_max_02","Soil_max_03","Soil_max_04"
                          "Soil_max_05","Soil_max_06","Soil_max_07","Soil_max_08",
                          "Soil_max_09","Soil_max_10"))
 
-# Save as ascii
+# Save as GTiff
 
 for(i in 1:length(variables)) {
   writeRaster(individual_soil_max[[i]], filename = paste0("C:/Users/User/Documents/Analyses/AVL/Rasters/ascii_procesadas/", variables[i]), format = "GTiff")
