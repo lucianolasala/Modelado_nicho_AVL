@@ -3,7 +3,6 @@
 #------------------------------------------------------------------------------------
 
 gc()
-
 rm(list=ls(all=TRUE))
 
 library(tidyverse)
@@ -61,7 +60,7 @@ ssize = 10000
 sm <- sample(n, size = ssize)
 length(sm)
 
-## Sample data 
+## Sample random data to perform correlation analysis
 
 dt <- NULL
 
@@ -77,16 +76,17 @@ dt <- dt %>%
 dim(dt)
 head(dt)
 
-write.table(dt, file = "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matriz_vars.txt")
+write.table(dt, file = "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_sample.txt")
 
-dt = read.table("C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matriz_vars.txt", header = TRUE)
+dt = read.table("C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_sample.txt", header = TRUE)
 
 class(dt)  # "data.frame"
-dim(dt)    # 10000 (rows) * 72 (columns)
-summary(dt)
+dim(dt)    # 10000 (rows) * 40 (columns)
 
-# Explore correlation and remove highly correlated variables
-# Remove each variable in turn and re-run this bit until all correlations are below 0.9.
+#---------------------------------------------------------------------------------------
+# Explore correlation on sampled matrix and remove highly correlated variables.
+# Remove each variable in turn and re-run this bit until all correlations are below 0.8.
+#---------------------------------------------------------------------------------------
 
 get.corr <- function(x){
     crr <- Hmisc::rcorr(as.matrix(x), type = "spearman")
@@ -105,13 +105,13 @@ get.corr <- function(x){
 cr <- get.corr(dt)
 
 to.remove <- names(sort(table(c(cr$v1, cr$v2)), decreasing = TRUE))
-to.remove
+to.remove  # "22" "4"  "9"  "21" "1"  "3"  "6"  "23" "2"  "8"  "10" "18" "19" "28" "33" "5"  "13" "14"
+           # "15" "25" "7"  "11" "16" "20" "24" "27" "31" "39" "17" "26"
 
 
-# Extract each variable in turn and the run the flattenCorrMatrix function:
+# Extract each variable in turn and then run the flattenCorrMatrix function:
 
 while(length(to.remove) > 0){
-  
   dt <- dt %>%
     dplyr::select(-as.numeric(to.remove[1]))
   cr <- get.corr(dt)
@@ -121,8 +121,28 @@ while(length(to.remove) > 0){
 dt
 dim(dt)  # 10000 * 19
 is.list(dt)
+colnames(dt)
 
-write.table(dt, file = "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matriz_vars_final.txt")
+write.table(dt, file = "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_selected_vars.txt")
+
+#----------------------------------------------------------------
+# Transform selected variables to ascii
+#----------------------------------------------------------------
+
+path = ("C:/Users/User/Documents/Analyses/AVL/Rasters/Corr_selected_rasters")
+
+files <- list.files(path = path, pattern = ".tif$", full.names = TRUE)
+files
+
+ftif <- gsub("\\.tif$", ".asc", files)
+
+for(i in 1:length(files)) {
+  r <- raster(files[i])
+  r <- writeRaster(r, ftif[i])
+}
+
+
+
 
 
 #----------------------------------------------------------------
@@ -186,7 +206,7 @@ r.mat
 
 corr_plot <- ggcorrplot(DF, method = "square", hc.order = TRUE, lab = TRUE, colors = c("blue", "grey", "red"), outline.col = "white", type = "lower", 
                           tl.cex = 8, lab_size = 3, tl.col = "black", tl.srt = 90, show.diag = TRUE, legend.title = "Ro",
-                          ggtheme = ggplot2::theme_gray)
+                          ggtheme = ggplot2::theme_dark)
 corr_plot
 
 ggsave(corr_plot, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Corr_plot.png")
@@ -203,7 +223,7 @@ library(caret)
 
 # La matriz DF es la matriz de correlacion anterior que tiene todos los valores de
 # correlacion.
-# The function fingCorrelation searches through a "correlation matrix" and returns a 
+# The function findCorrelation searches through a "correlation matrix" and returns a 
 # vector of integers corresponding to columns to remove to reduce pair-wise correlations.
 # Apply correlation filter at 0.8
 
@@ -220,8 +240,6 @@ Filtered <- DF2[,-highlyCor]
 class(Filtered)
 dim(Filtered)  # 71 36 (se sacaron 35)
 
-
-     
 mat_keep_rows <- c("Bioclim 1","Bioclim 13","Bioclim 15","Bioclim 2","Bioclim 3","Bioclim 5","Bioclim 7",
                    "Bioclim 8","Elevation_min","Slope average","Slope min","Slope range","Soil_avg_01",
                    "Soil_avg_02","Soil_avg_04","Soil_avg_05","Soil_avg_07","Soil_avg_08","Soil_avg_09","Soil_avg_10",
