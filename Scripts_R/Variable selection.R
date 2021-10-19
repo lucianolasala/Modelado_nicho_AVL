@@ -181,18 +181,16 @@ p.mat <- cor$P  # rstatix
 p.mat
 plot.new()
 
-corr_plot <- ggcorrplot(DF, outline.col = "white", type = "lower", 
-                          tl.cex = 10, tl.col = "black", tl.srt = 90, 
-                          ggtheme = ggplot2::theme_gray, sig.level = 0.05, 
-                          insig = "pch", p.mat = p.mat)
+r.mat <- cor$r
+r.mat
 
+corr_plot <- ggcorrplot(DF, method = "square", hc.order = TRUE, lab = TRUE, colors = c("blue", "grey", "red"), outline.col = "white", type = "lower", 
+                          tl.cex = 8, lab_size = 3, tl.col = "black", tl.srt = 90, show.diag = TRUE, legend.title = "Ro",
+                          ggtheme = ggplot2::theme_gray)
 corr_plot
 
+ggsave(corr_plot, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Corr_plot.png")
 
-corr_plot_1 <- corrplot(DF, order = "hclust", tl.cex = 0.8)
-corr_plot_1
-
-cowplot::save_plot(corr_plot_1, filename = "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Corr_plot.png", type = "cairo", base_height = 8, base_width = 8)
 
 #-------------------------------------------------------------------------
 # Introduction to Feature selection for bioinformaticians using R, 
