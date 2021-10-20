@@ -26,6 +26,9 @@ vnames
 
 #------------------------------------------------------------------------
 # Check spatial resolution and raster extent for layers
+# Bio8 and Bio9 were removed due to aberrant data patterns in the study region
+# Bio18 (Precipitation of Warmest Quarter) and Bio19 (Precipitation of Coldest Quarter)
+# were removed because they combine precip. and temp. variables. 
 #------------------------------------------------------------------------
 
 mytable <- NULL
@@ -47,7 +50,7 @@ xlsx::write.xlsx(mytable, file = "C:/Users/User/Documents/Analyses/AVL/Rasters/O
 
 st <- read_stars(files[1]) %>% set_names("z")
 n <- which(!is.na(st$z))
-length(n)  # 27783
+length(n)  # 27607
 
 
 #----------------------------------------------------------------
@@ -78,8 +81,6 @@ head(dt)
 
 write.table(dt, file = "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_sample.txt")
 
-dt = read.table("C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_sample.txt", header = TRUE)
-
 class(dt)  # "data.frame"
 dim(dt)    # 10000 (rows) * 40 (columns)
 
@@ -87,6 +88,8 @@ dim(dt)    # 10000 (rows) * 40 (columns)
 # Explore correlation on sampled matrix and remove highly correlated variables.
 # Remove each variable in turn and re-run this bit until all correlations are below 0.8.
 #---------------------------------------------------------------------------------------
+
+dt = read.table("C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_sample.txt", header = TRUE)
 
 get.corr <- function(x){
     crr <- Hmisc::rcorr(as.matrix(x), type = "spearman")
@@ -103,10 +106,11 @@ get.corr <- function(x){
 }
 
 cr <- get.corr(dt)
+cr
 
 to.remove <- names(sort(table(c(cr$v1, cr$v2)), decreasing = TRUE))
-to.remove  # "22" "4"  "9"  "21" "1"  "3"  "6"  "23" "2"  "8"  "10" "18" "19" "28" "33" "5"  "13" "14"
-           # "15" "25" "7"  "11" "16" "20" "24" "27" "31" "39" "17" "26"
+to.remove  # "22" "4"  "9"  "21" "1"  "3"  "6"  "19" "23" "2"  "8"  "10" "18" "25" "33" "5"  "13"
+           # "14" "15" "28" "7"  "16" "20" "24" "27" "31" "39" "11" "17" "26"
 
 
 # Extract each variable in turn and then run the flattenCorrMatrix function:
@@ -119,11 +123,15 @@ while(length(to.remove) > 0){
 }
 
 dt
-dim(dt)  # 10000 * 19
+dim(dt)  # 10000 * 20
 is.list(dt)
 colnames(dt)
 
+summary(dt)
+
 write.table(dt, file = "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_selected_vars.txt")
+xlsx::write.xlsx(dt, file = "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_selected_vars.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
+
 
 #----------------------------------------------------------------
 # Transform selected variables to ascii
@@ -142,14 +150,30 @@ for(i in 1:length(files)) {
 }
 
 
+#----------------------------------------------------------------
+# LFLS. Correlation. Uso de funcion rcorr del paquete Hmisc para 
+# obtener matriz de corr. y evaluar Bio19
+#----------------------------------------------------------------
 
+dt = read.table("C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_sample.txt", header = TRUE)
+
+mat_1 = as.matrix(dt)
+
+cor_1 = Hmisc::rcorr(mat_1, type = "spearman")
+
+DF_1 <- cor_1$r
+DF_1
+
+dim(DF_1)  # 40*40
+
+write.xlsx(DF_1, "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_r_completa.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
 
 
 #----------------------------------------------------------------
 # LFLS. Correlation. Uso de funcion rcorr del paquete Hmisc
 #----------------------------------------------------------------
 
-matrix_final = read.table("C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matriz_vars_final.txt", header = TRUE)
+matrix_final = read.table("C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_selected_vars.txt", header = TRUE)
 is.matrix(matrix_final)
 is.data.frame(matrix_final)
 
@@ -171,20 +195,20 @@ cor$n
 DF <- cor$r
 
 class(DF)  # Matrix
-dim(DF)    # 19*19
+dim(DF)    # 20*20
 colnames(DF)
 
-colnames(DF) <- c("Bio13","Bio15","Bio2",                    
+colnames(DF) <- c("Bio13","Bio15","Bio19", "Bio2",                    
                   "Bio3","Bio5","Bio7","Month min temp.","Slope min",
                   "Slope range","Soil_avg_01","Soil_avg_02","Soil_avg_04",
                   "Soil_avg_05","Soil_avg_06","Soil_avg_07","Soil_avg_08",
                   "Soil_avg_09","Soil_avg_10","Upstream grid cells")
 
-rownames(DF) <- c("Bio13","Bio15","Bio2",                    
-                   "Bio3","Bio5","Bio7","Month min temp.","Slope min",
-                   "Slope range","Soil_avg_01","Soil_avg_02","Soil_avg_04",
-                   "Soil_avg_05","Soil_avg_06","Soil_avg_07","Soil_avg_08",
-                   "Soil_avg_09","Soil_avg_10","Upstream grid cells")
+rownames(DF) <- c("Bio13","Bio15","Bio19", "Bio2",                    
+                  "Bio3","Bio5","Bio7","Month min temp.","Slope min",
+                  "Slope range","Soil_avg_01","Soil_avg_02","Soil_avg_04",
+                  "Soil_avg_05","Soil_avg_06","Soil_avg_07","Soil_avg_08",
+                  "Soil_avg_09","Soil_avg_10","Upstream grid cells")
 DF
 summary(DF)
 
@@ -193,7 +217,7 @@ dim(DF)
 
 write.xlsx(cor$r, "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_r.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
 write.xlsx(cor$P, "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_P.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
-write.xlsx(DF, "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(DF, "C:/Users/User/Documents/Analyses/AVL/Rasters/Outputs correlation/Matrix_values.xlsx", sheetName = "Sheet1", col.names = TRUE, row.names = TRUE, append = FALSE)
 
 # Compute a matrix of correlation p-values
 
@@ -205,7 +229,7 @@ r.mat <- cor$r
 r.mat
 
 corr_plot <- ggcorrplot(DF, method = "square", hc.order = TRUE, lab = TRUE, colors = c("blue", "grey", "red"), outline.col = "white", type = "lower", 
-                          tl.cex = 8, lab_size = 3, tl.col = "black", tl.srt = 90, show.diag = TRUE, legend.title = "Ro",
+                          tl.cex = 8, lab_size = 1.5, tl.col = "black", tl.srt = 90, show.diag = TRUE, legend.title = "Ro",
                           ggtheme = ggplot2::theme_dark)
 corr_plot
 
