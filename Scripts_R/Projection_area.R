@@ -125,4 +125,4 @@ plot(G_dissolved, col = "blue")
 G_dissolved = as(G_dissolved, "SpatialPolygonsDataFrame")
 class(G_dissolved)
 
-writeOGR(G_dissolved, layer = "G_dissolved", "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_proyeccion/G_dissolved.shp", driver = "ESRI Shapefile")
+writeOGR(G_dissolved, layer = "G_dissolved", "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_proyeccion/G_final.shp", driver = "ESRI Shapefile")
