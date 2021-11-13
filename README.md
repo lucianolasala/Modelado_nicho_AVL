@@ -1,4 +1,4 @@
-## Niche modeling for free-living amoebae in southen Buenos Aires province
+## Niche modeling for free-living amoebae in Buenos Aires province, Argentina
 
 <img src="https://user-images.githubusercontent.com/20196847/132431276-35bf910b-ab3c-48c0-86c0-9efa52fb5a93.jpg" height="100" width="100" img align="right">
 
