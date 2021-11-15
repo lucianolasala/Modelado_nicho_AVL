@@ -2,7 +2,6 @@
 #### Estimation of G
 >Projection area (G) consist of ecoregions in area of interest where FLA have not been recorded.
 
-
 ----
 #### Loading watersheds file 
 
@@ -18,9 +17,12 @@ which(valid == "FALSE") # 15 (numbers 3749  12788  15508  34768  36779  42630  4
 # 57719  59742  60178  65296 69751 116697 131432)
 
 which(valid=="TRUE")  # 163640
+```
 
-# Ver donde se ubican los poligonos con geometrias invalidas
+----
+#### Explore where the polygons with invalid geometries are
 
+```r
 corrupt = watersheds %>% filter(
     BASIN_ID == 3749 | 
         BASIN_ID == 12788 | 
@@ -51,25 +53,34 @@ plot.new()
 plot(bsas$geometry, add = TRUE)
 
 st_write(corrupt, "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Valid watersheds/Bs_As.gpkg", driver = "gpkg")
+```
 
-# Result: Hay 3 de las 15 cuencias con geometria invalidas que se corresponde a G
-# Intentaré procesar rasters sin arreglar geometrias.
+>Result: There are 3 watersheds out of 15 that have invalid geoms. and correspond to G.
 
-# Loading watersheds
+----
+#### Loading all watersheds
 
 watersheds <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/hydrosheds/sa_bas_30s_beta/sa_bas_30s_beta.shp")
 str(watersheds)
 
-# Loading M watersheds
+----
+#### Loading watersheds in M
 
+```r
 watersheds_M <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/Watersheds_AVL.gpkg")
+```
 
-# Watersheds difference
+----
+#### Watersheds difference
 
+```r
 ids <- watersheds_M$BASIN_ID
+```
 
-# Filgter watersheds that are not part of M
+----
+#### Filgter watersheds that are not part of M
 
+```r
 watersheds_not_M <- watersheds[!(watersheds$BASIN_ID == 58476|
                                      watersheds$BASIN_ID == 59931|
                                      watersheds$BASIN_ID == 60630|
@@ -90,30 +101,29 @@ watersheds_not_M <- watersheds[!(watersheds$BASIN_ID == 58476|
 plot(watersheds_not_M$geometry, col = "blue")
 
 st_write(watersheds_not_M, "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Valid watersheds/Watersheds_not_M.gpkg", driver = "gpkg")
+```
 
-# Como hay muchas cuencas con errores de topologia, se corrigieron en QGIS las que rodean Bs. As.
-# y se ignoraron las mas lejanas o separadas del limite.
+>Since there are many watersheds with topology errors, these were corrected using QGIS. For practica purposes, only those overlapping Bs. As. province were explored and processed, ignoring non-overlapping ones. 
 
-# Loading Bs. As. province
+----
+#### Loading Bs. As. province and watersheds and selecting those overlapping (totally or partially) with Bs. As. province
 
+```r
 bsas <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/Bs.As_province.gpkg")
 
-# Loading watersheds
-
 watersheds_bsas <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Watersheds/Watersheds_not_M_subset.gpkg")
-
-# Selecting watersheds overlapping (totally or partially) with Bs. As. 
 
 G <- st_intersection(watersheds_bsas, bsas)
 
 plot(G$geom)
 
 st_write(G, "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_proyeccion/G.gpkg")
+```
 
-#-------------------------------------------------------------------------
-# Disolve ecoregions without AVL occurrences
-#-------------------------------------------------------------------------
+----
+#### Disolve ecoregions without AVL occurrences
 
+```r
 G <- readOGR("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_proyeccion/G.gpkg")
 
 G_dissolved <- rgeos::gUnaryUnion(G)   # fc in rgeos pkg
