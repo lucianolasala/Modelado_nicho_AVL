@@ -1,4 +1,3 @@
-----
 #### Estimation of G
 >Projection area (G) consist of ecoregions in area of interest where FLA have not been recorded.
 
@@ -121,7 +120,7 @@ st_write(G, "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_proyeccion/G.
 ```
 
 ----
-#### Disolve ecoregions without AVL occurrences
+#### Disolving ecoregions without AVL occurrences
 
 ```r
 G <- readOGR("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_proyeccion/G.gpkg")
