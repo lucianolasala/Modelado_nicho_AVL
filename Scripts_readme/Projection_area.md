@@ -1,11 +1,10 @@
-# Projection area (G) consist of ecoregions in area of interest where FLA
-# have been not been recorded
+----
+#### Estimation of G
+>Projection area (G) consist of ecoregions in area of interest where FLA have not been recorded.
 
-#------------------------------------------------------------------------------------
-# Estimation of G
-#------------------------------------------------------------------------------------
 
-# Carga de archivo vectorial de cuencas 
+----
+#### Loading watersheds file 
 
 ```r
 watersheds <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/hydrosheds/sa_bas_30s_beta")
