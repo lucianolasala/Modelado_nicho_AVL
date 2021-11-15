@@ -1,7 +1,6 @@
 #### Estimation of G
 >Projection area (G) consist of ecoregions in area of interest where FLA have not been recorded.
 
-----
 #### Loading watersheds file 
 
 ```r
