@@ -17,7 +17,6 @@ which(valid == "FALSE") # 15 (numbers 3749  12788  15508  34768  36779  42630  4
 which(valid=="TRUE")  # 163640
 ```
 
-----
 #### Explore where the polygons with invalid geometries are
 
 ```r
@@ -55,27 +54,23 @@ st_write(corrupt, "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Valid waters
 
 >Result: There are 3 watersheds out of 15 that have invalid geoms. and correspond to G.
 
-----
 #### Loading all watersheds
 
 watersheds <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/hydrosheds/sa_bas_30s_beta/sa_bas_30s_beta.shp")
 str(watersheds)
 
-----
 #### Loading watersheds in M
 
 ```r
 watersheds_M <- st_read("C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_calibracion/Watersheds_AVL.gpkg")
 ```
 
-----
 #### Watersheds difference
 
 ```r
 ids <- watersheds_M$BASIN_ID
 ```
 
-----
 #### Filgter watersheds that are not part of M
 
 ```r
@@ -103,7 +98,6 @@ st_write(watersheds_not_M, "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Val
 
 >Since there are many watersheds with topology errors, these were corrected using QGIS. For practica purposes, only those overlapping Bs. As. province were explored and processed, ignoring non-overlapping ones. 
 
-----
 #### Loading Bs. As. province and watersheds and selecting those overlapping (totally or partially) with Bs. As. province
 
 ```r
@@ -118,7 +112,6 @@ plot(G$geom)
 st_write(G, "C:/Users/User/Documents/Analyses/AVL/Vectoriales/Area_proyeccion/G.gpkg")
 ```
 
-----
 #### Disolving ecoregions without AVL occurrences
 
 ```r
